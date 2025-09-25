@@ -10,6 +10,8 @@
     <module>auth-service</module>
     <module>student-service</module>
     <module>payment-service</module>
+    <module>otp-service</module>
+    <module>email-service</module>
   </modules>
 
   <name>Archetype - ibanking-parent</name>

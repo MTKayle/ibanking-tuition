@@ -8,6 +8,7 @@ public class LoginResponse {
     private String phoneNumber;
     private String fullName;
     private double balance;
+    private String token;
 
     public String getEmail() {
         return email;
@@ -38,5 +39,12 @@ public class LoginResponse {
     }
     public void setBalance(double balance) {
         this.balance = balance;
+    }
+
+    public String getToken() {
+        return token;
+    }
+    public void setToken(String token) {
+        this.token = token;
     }
 }

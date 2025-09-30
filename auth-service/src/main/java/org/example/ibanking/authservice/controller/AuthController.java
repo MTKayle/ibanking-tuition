@@ -14,12 +14,16 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/ibanking/tuition/auth")
 public class AuthController {
 
+    // Inject AuthService to handle authentication logic
     @Autowired
     private AuthService authService;
 
-    @PostMapping("/login1")
+    // Endpoint for user login
+    @PostMapping("/login") // Handles POST requests to /ibanking/tuition/auth/login
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
         System.out.println(">>> Received login request: " + request.getUsername());
+        System.out.println(">>> Received login request: " + request.getPassword());
+        // Authenticate the user and generate a JWT token
         LoginResponse response = authService.authenticate(request);
         return ResponseEntity.ok(response);
     }

@@ -21,7 +21,8 @@ public class SecurityConfig {
         return http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/ibanking/tuition/email/send-mail").permitAll()
+                        .requestMatchers("/ibanking/tuition/email/send-payment-mail").permitAll()
+                        .requestMatchers("/ibanking/tuition/email/send-otp-mail").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

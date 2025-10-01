@@ -106,15 +106,15 @@ const PayForOther = () => {
         <div className="p-6">
           {/* Your Account Info */}
           <div className="bg-purple-50 rounded-lg p-4 mb-6">
-            <h3 className="font-semibold text-gray-800 mb-3">Thông tin tài khoản của bạn</h3>
+            <h3 className="font-semibold text-gray-800 mb-3">Tài khoản thanh toán</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
               <div>
-                <span className="text-gray-600">Họ và tên:</span>
+                <span className="text-gray-600">Chủ tài khoản:</span>
                 <span className="ml-2 font-medium">{user?.name}</span>
               </div>
               <div>
-                <span className="text-gray-600">Mã sinh viên:</span>
-                <span className="ml-2 font-medium">{user?.studentId}</span>
+                <span className="text-gray-600">Số tài khoản:</span>
+                <span className="ml-2 font-medium">{user?.accountNumber}</span>
               </div>
               <div>
                 <span className="text-gray-600">Số dư khả dụng:</span>

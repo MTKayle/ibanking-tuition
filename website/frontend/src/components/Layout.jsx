@@ -138,10 +138,6 @@ const Layout = () => {
                   <p className="font-medium">{user?.accountNumber}</p>
                 </div>
                 <div>
-                  <p className="text-gray-600">Mã sinh viên</p>
-                  <p className="font-medium">{user?.studentId}</p>
-                </div>
-                <div>
                   <p className="text-gray-600">Email</p>
                   <p className="font-medium text-xs">{user?.email}</p>
                 </div>

@@ -1,23 +1,23 @@
 # 🏦 iBanking - Hệ thống thanh toán học phí trực tuyến
 
-Ứng dụng web ngân hàng dùng để thanh toán học phí, hỗ trợ thanh toán cho sinh viên khác bằng mã sinh viên. Ứng dụng được xây dựng với React + Vite + Tailwind CSS.
+Ứng dụng web ngân hàng dùng để thanh toán học phí. Người dùng đăng nhập bằng tài khoản ngân hàng, sau đó nhập mã số sinh viên để tra cứu và thanh toán học phí. Ứng dụng được xây dựng với React + Vite + Tailwind CSS.
 
 ## ✨ Tính năng
 
 ### 🔐 Đăng nhập
-- Đăng nhập bằng số tài khoản và mật khẩu
+- Đăng nhập tài khoản ngân hàng bằng số tài khoản và mật khẩu
 - Giao diện đăng nhập hiện đại, bắt mắt
 
 ### 📊 Trang chủ (Dashboard)
-- Hiển thị tổng quan tài khoản
+- Hiển thị tổng quan tài khoản ngân hàng
 - Thống kê giao dịch
 - Giao dịch gần đây
 - Các thao tác nhanh
 
 ### 💳 Thanh toán học phí
-- Thanh toán học phí cho bản thân
-- Chọn học kỳ
-- Hiển thị thông tin sinh viên
+- Nhập mã số sinh viên để tra cứu thông tin học phí
+- Hiển thị thông tin sinh viên và học phí cần thanh toán
+- Hệ thống tự động xác định học phí dựa trên MSSV
 - Kiểm tra số dư
 - Xác nhận thanh toán
 
@@ -67,7 +67,7 @@ npm run preview
 
 ## 🔑 Thông tin đăng nhập Demo
 
-**Lưu ý:** Đây là ứng dụng demo, chỉ có frontend. Bạn có thể đăng nhập bằng bất kỳ số tài khoản và mật khẩu nào.
+**Lưu ý:** Đây là ứng dụng demo, chỉ có frontend. Bạn có thể đăng nhập bằng bất kỳ số tài khoản ngân hàng và mật khẩu nào.
 
 Ví dụ:
 - Số tài khoản: `1234567890`
@@ -75,11 +75,12 @@ Ví dụ:
 
 ## 👨‍🎓 Mã sinh viên Demo
 
-Sử dụng các mã sinh viên sau để test tính năng thanh toán cho sinh viên khác:
-- `SV202401111` - Trần Thị B
-- `SV202401222` - Lê Văn C
-- `SV202401333` - Phạm Thị D
-- `SV202401444` - Hoàng Văn E
+Sử dụng các mã sinh viên sau để test tính năng thanh toán học phí:
+- `SV202401111` - Trần Thị B - Học phí: 15,000,000 VNĐ
+- `SV202401222` - Lê Văn C - Học phí: 15,000,000 VNĐ
+- `SV202401234` - Nguyễn Văn A - Học phí: 15,000,000 VNĐ
+- `SV202401333` - Phạm Thị D - Học phí: 12,000,000 VNĐ
+- `SV202401444` - Hoàng Văn E - Học phí: 15,000,000 VNĐ
 
 ## 🛠️ Công nghệ sử dụng
 
@@ -115,13 +116,26 @@ frontend/
 └── tailwind.config.js
 ```
 
-## 🎨 Giao diện
+## 🎨 Giao diện & Hiệu ứng
 
 - Thiết kế hiện đại, responsive
 - Màu sắc chủ đạo: Blue & Indigo
-- UI/UX thân thiện
-- Animation mượt mà
-- Hỗ trợ mobile
+- UI/UX thân thiện người dùng
+- Hỗ trợ mobile hoàn hảo
+
+### ✨ Animations & Effects:
+- **Fade-in animations** - Các phần tử xuất hiện mượt mà
+- **Slide animations** - Hiệu ứng trượt cho cards và rows
+- **Blob animations** - Background động với hiệu ứng blob
+- **Hover effects** - Scale, shadow, gradient khi hover
+- **Stagger animations** - Xuất hiện lần lượt cho lists
+- **Loading skeletons** - Shimmer effect khi loading
+- **Modal animations** - Scale-in cho popups
+- **Counter animations** - Số liệu hiển thị với hiệu ứng
+- **Gradient shifts** - Background gradient chuyển động
+- **Bounce effects** - Logo và icons nhảy nhẹ
+
+> Xem chi tiết tại [ANIMATIONS.md](./ANIMATIONS.md)
 
 ## 💾 Lưu trữ dữ liệu
 

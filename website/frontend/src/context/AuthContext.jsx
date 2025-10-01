@@ -36,17 +36,17 @@ export const AuthProvider = ({ children }) => {
           type: 'Thanh toán học phí',
           amount: 15000000,
           status: 'Thành công',
-          recipient: 'SV202401234',
-          description: 'Học phí học kỳ 1 năm 2025'
+          recipient: 'SV202401111',
+          description: 'Học phí Học kỳ 1 - Năm 2025 - Trần Thị B (SV202401111)'
         },
         {
           id: 'TXN002',
           date: '2025-08-20',
-          type: 'Thanh toán học phí',
+          type: 'Thanh toán cho SV khác',
           amount: 15000000,
           status: 'Thành công',
-          recipient: 'SV202401234',
-          description: 'Học phí học kỳ 2 năm 2024'
+          recipient: 'SV202401222',
+          description: 'Học phí Học kỳ 2 - Năm 2024 - Thanh toán cho Lê Văn C (SV202401222)'
         }
       ]
       setTransactions(sampleTransactions)
@@ -60,9 +60,8 @@ export const AuthProvider = ({ children }) => {
       const userData = {
         name: 'Nguyễn Văn A',
         accountNumber: accountNumber,
-        studentId: 'SV202401234',
         balance: 50000000,
-        email: 'nguyenvana@student.edu.vn'
+        email: 'nguyenvana@example.com'
       }
       setUser(userData)
       setIsAuthenticated(true)

@@ -23,12 +23,19 @@ const Login = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-700 flex items-center justify-center p-4">
-      <div className="max-w-md w-full">
+    <div className="min-h-screen bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-700 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Animated background blobs */}
+      <div className="absolute inset-0">
+        <div className="absolute top-20 left-10 w-96 h-96 bg-blue-400 rounded-full blur-3xl opacity-20 animate-blob"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-400 rounded-full blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-400 rounded-full blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
+      </div>
+      
+      <div className="max-w-md w-full relative z-10">
         {/* Logo and Title */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-8 animate-fade-in">
           <div className="flex justify-center mb-4">
-            <div className="bg-white p-4 rounded-full shadow-lg">
+            <div className="bg-white p-4 rounded-full shadow-lg animate-bounce-slow">
               <Wallet className="h-12 w-12 text-primary-600" />
             </div>
           </div>
@@ -37,7 +44,7 @@ const Login = () => {
         </div>
 
         {/* Login Card */}
-        <div className="bg-white rounded-2xl shadow-2xl p-8">
+        <div className="bg-white rounded-2xl shadow-2xl p-8 animate-slide-up animation-delay-200 backdrop-blur-sm">
           <h2 className="text-2xl font-bold text-gray-800 mb-6">Đăng nhập</h2>
           
           {error && (
@@ -88,7 +95,7 @@ const Login = () => {
 
             <button
               type="submit"
-              className="w-full bg-primary-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 transition-all transform hover:scale-[1.02]"
+              className="w-full bg-gradient-to-r from-primary-600 to-indigo-600 text-white py-3 px-4 rounded-lg font-semibold hover:from-primary-700 hover:to-indigo-700 focus:ring-4 focus:ring-primary-200 transition-all transform hover:scale-[1.02] shadow-lg hover:shadow-xl"
             >
               Đăng nhập
             </button>
@@ -102,7 +109,7 @@ const Login = () => {
         </div>
 
         {/* Footer */}
-        <div className="mt-6 text-center">
+        <div className="mt-6 text-center animate-fade-in animation-delay-400">
           <p className="text-sm text-blue-100">
             © 2025 iBanking. Hệ thống thanh toán học phí trực tuyến.
           </p>

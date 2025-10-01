@@ -1,9 +1,9 @@
-package org.example.ibanking.studentservice.student_service;
+package org.example.ibanking.studentservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "org.example.ibanking.studentservice")
 public class StudentServiceApplication {
 
 	public static void main(String[] args) {

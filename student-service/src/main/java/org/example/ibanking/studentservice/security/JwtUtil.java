@@ -1,4 +1,4 @@
-package org.example.ibanking.authservice.security;
+package org.example.ibanking.studentservice.security;
 
 
 import io.jsonwebtoken.security.Keys;
@@ -48,7 +48,8 @@ public class JwtUtil {
                     .parseClaimsJws(token); // Parse the token
             return true; // Token is valid
         } catch (JwtException e) {
-            // Token is invalid (expired, malformed, etc.)
+             //Token is invalid (expired, malformed, etc.)
+
             return false;
         }
     }

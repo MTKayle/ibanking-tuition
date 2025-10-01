@@ -12,7 +12,7 @@ import javax.crypto.spec.SecretKeySpec;
 public class JwtDecoderConfig {
 
     //dung secret key này để mã hóa và giải mã JWT
-    private static final String SECRET_KEY = "mySecretKey123OnlyUseInDevSmallProject"; // key
+    private static final String SECRET_KEY = "mySuperSecretKeyForJwtAuth1234567890"; // key
 
     @Bean
     public NimbusReactiveJwtDecoder jwtDecoder() {

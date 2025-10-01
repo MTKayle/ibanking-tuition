@@ -25,6 +25,7 @@ public class AuthController {
         System.out.println(">>> Received login request: " + request.getPassword());
         // Authenticate the user and generate a JWT token
         LoginResponse response = authService.authenticate(request);
+        System.out.println(response.getToken());
         return ResponseEntity.ok(response);
     }
 }

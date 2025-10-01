@@ -1,4 +1,4 @@
-package org.example.ibanking.authservice.security;
+package org.example.ibanking.studentservice.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -26,7 +26,7 @@ public class GatewaySecretFilter extends OncePerRequestFilter {
         // Check request from API Gateway
         String secret = request.getHeader(HEADER);
         System.out.println("secret api:" + secret);
-        //
+
         if (!SECRET.equals(secret)) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN); // 403
             return;
@@ -35,4 +35,5 @@ public class GatewaySecretFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 }
+
 

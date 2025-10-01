@@ -18,6 +18,12 @@ spring:
                 - AddRequestHeader=X-Gateway-Secret,my-super-secret
 
 
+            - id: student-service
+              uri: http://localhost:8084
+              predicates:
+                - Path=/ibanking/tuition/students/**
+              filters:
+                - AddRequestHeader=X-Gateway-Secret,my-super-secret
 management:
   endpoints:
     web:

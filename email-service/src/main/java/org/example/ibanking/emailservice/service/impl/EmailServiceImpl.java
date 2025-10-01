@@ -22,18 +22,31 @@ public class EmailServiceImpl implements EmailService {
         String formattedDate = dateTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
 
         return String.format(
-                "Kính gửi %s,\n\n" +
-                        "Nhà trường xin thông báo rằng bạn đã hoàn tất thanh toán học phí thành công với thông tin sau:\n\n" +
+                "Kính gửi Khách hàng,\n\n" +
+                        "Mail thông báo bạn đã hoàn tất thanh toán học phí thành công với thông tin sau:\n\n" +
                         "- Mã số sinh viên: %s\n" +
                         "- Họ và tên: %s\n" +
                         "- Học kỳ: %s\n" +
                         "- Thời gian thanh toán: %s\n\n" +
-                        "Trân trọng,\n" +
-                        "Phòng Tài chính - Kế toán\n" +
-                        "Trường Đại học Tôn Đức Thắng",
-                nameStudent, StudentID, nameStudent, major, formattedDate
+                        "Trân trọng,\n",
+                StudentID, nameStudent, major, formattedDate
         );
     }
+
+    private static final String otpMessage(String otp) {
+        return String.format(
+                "Kính gửi Khách hàng,\n\n" +
+                        "Bạn vừa yêu cầu xác thực giao dịch/đăng nhập trên hệ thống iBanking.\n" +
+                        "Vui lòng sử dụng mã OTP sau để hoàn tất quá trình xác thực:\n\n" +
+                        "👉 Mã OTP của bạn: %s\n\n" +
+                        "⚠️ Lưu ý:\n" +
+                        "- Mã OTP chỉ có hiệu lực trong vòng 1 phút.\n" +
+                        "- Không chia sẻ mã này với bất kỳ ai để đảm bảo an toàn tài khoản.\n\n" +
+                        "Trân trọng,\n",
+                otp
+        );
+    }
+
 
     public boolean sendEmailPayment(EmailRequestPayment emailRequestPayment) {
 
@@ -58,7 +71,20 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
-    public boolean sendEmailOTP(EmailRequestOTP emailRequestPayment) {
-        return true;
+    public boolean sendEmailOTP(EmailRequestOTP emailRequestOTP) {
+
+        String otpMessage = otpMessage(emailRequestOTP.getOtp());
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        try{
+            message.setTo(emailRequestOTP.getToEmail());
+            message.setText(otpMessage);
+            message.setSubject("MÃ OTP XÁC THỰC GIAO DỊCH");
+            javaMailSender.send(message);
+            return true;
+        }
+        catch (Exception e){
+            throw new MailSendException(e.getMessage());
+        }
     }
 }

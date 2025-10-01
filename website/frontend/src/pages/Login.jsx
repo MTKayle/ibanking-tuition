@@ -10,11 +10,11 @@ const Login = () => {
   const { login } = useAuth()
   const navigate = useNavigate()
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
     
-    const result = login(accountNumber, password)
+    const result = await login(accountNumber, password)
     if (result.success) {
       navigate('/')
     } else {
@@ -103,7 +103,7 @@ const Login = () => {
 
           <div className="mt-6 pt-6 border-t border-gray-200">
             <p className="text-sm text-gray-600 text-center">
-              💡 Demo: Nhập bất kỳ số tài khoản và mật khẩu để đăng nhập
+              🔒 Hệ thống xác thực qua API Gateway
             </p>
           </div>
         </div>

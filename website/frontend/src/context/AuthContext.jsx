@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react'
+import { authAPI, setToken, removeToken, getToken } from '../services/api'
 
 const AuthContext = createContext(null)
 
@@ -18,9 +19,10 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     // Check if user is logged in from localStorage
     const storedUser = localStorage.getItem('user')
+    const storedToken = getToken()
     const storedTransactions = localStorage.getItem('transactions')
     
-    if (storedUser) {
+    if (storedUser && storedToken) {
       setUser(JSON.parse(storedUser))
       setIsAuthenticated(true)
     }
@@ -54,27 +56,43 @@ export const AuthProvider = ({ children }) => {
     }
   }, [])
 
-  const login = (accountNumber, password) => {
-    // Demo login - accept any non-empty credentials
-    if (accountNumber && password) {
+  const login = async (accountNumber, password) => {
+    try {
+      // Call auth API
+      const response = await authAPI.login(accountNumber, password)
+      
+      // Extract user data from response
       const userData = {
-        name: 'Nguyễn Văn A',
+        name: response.fullName,
         accountNumber: accountNumber,
-        balance: 50000000,
-        email: 'nguyenvana@example.com'
+        balance: response.balance,
+        email: response.email,
+        phoneNumber: response.phoneNumber
       }
+      
+      // Store token
+      setToken(response.token)
+      
+      // Update state
       setUser(userData)
       setIsAuthenticated(true)
       localStorage.setItem('user', JSON.stringify(userData))
+      
       return { success: true }
+    } catch (error) {
+      console.error('Login error:', error)
+      return { 
+        success: false, 
+        message: error.message || 'Đăng nhập thất bại. Vui lòng kiểm tra lại số tài khoản và mật khẩu.' 
+      }
     }
-    return { success: false, message: 'Số tài khoản hoặc mật khẩu không đúng' }
   }
 
   const logout = () => {
     setUser(null)
     setIsAuthenticated(false)
     localStorage.removeItem('user')
+    removeToken()
   }
 
   const addTransaction = (transaction) => {

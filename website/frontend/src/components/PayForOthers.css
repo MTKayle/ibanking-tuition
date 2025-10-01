@@ -1,0 +1,130 @@
+.pay-for-others-page {
+  min-height: 100vh;
+  background: transparent;
+  position: relative;
+  z-index: 1;
+}
+
+.student-name {
+  margin-top: 0.875rem;
+  color: var(--success);
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.05));
+  border-radius: 1.25rem;
+  display: inline-block;
+  animation: slideDown 0.4s ease;
+  border-left: 4px solid var(--success);
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.1);
+}
+
+.beneficiary-name {
+  font-size: 1.875rem !important;
+  font-weight: 800 !important;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  margin: 1.5rem 0 !important;
+  letter-spacing: -0.02em;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.info-box {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(251, 191, 36, 0.05));
+  border-left: 4px solid var(--warning);
+  padding: 2rem;
+  border-radius: 1.5rem;
+  margin-top: 2.5rem;
+  box-shadow: 0 4px 20px rgba(245, 158, 11, 0.1);
+  transition: all 0.4s ease;
+  animation: slideUp 0.5s ease;
+  border: 1px solid rgba(245, 158, 11, 0.15);
+}
+
+.info-box:hover {
+  box-shadow: 0 8px 30px rgba(245, 158, 11, 0.2);
+  transform: translateY(-3px);
+}
+
+.info-box p {
+  color: #92400e;
+  margin-bottom: 1.25rem;
+  font-weight: 700;
+  font-size: 1.05rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.info-box p::before {
+  content: '⚠️';
+  font-size: 1.5rem;
+}
+
+.info-box ul {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.info-box li {
+  color: #78350f;
+  margin: 1rem 0;
+  line-height: 1.7;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.info-box li::marker {
+  color: var(--warning);
+  font-weight: bold;
+}
+
+.error-message {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.05));
+  color: #991b1b;
+  padding: 1.25rem 1.5rem;
+  border-radius: 1.25rem;
+  margin: 1.5rem 0;
+  border-left: 4px solid var(--danger);
+  font-weight: 700;
+  font-size: 1rem;
+  animation: shake 0.5s ease;
+  box-shadow: 0 4px 20px rgba(239, 68, 68, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border: 1px solid rgba(239, 68, 68, 0.15);
+}
+
+.error-message::before {
+  content: '⚠️';
+  font-size: 1.75rem;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-8px); }
+  75% { transform: translateX(8px); }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .info-box {
+    padding: 1.5rem;
+  }
+  
+  .info-box p {
+    font-size: 1rem;
+  }
+  
+  .info-box li {
+    font-size: 0.9rem;
+  }
+  
+  .beneficiary-name {
+    font-size: 1.5rem !important;
+  }
+}

@@ -27,6 +27,4 @@ public class AuthController {
         LoginResponse response = authService.authenticate(request);
         return ResponseEntity.ok(response);
     }
-
-
 }

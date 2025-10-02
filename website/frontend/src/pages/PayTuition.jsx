@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { studentAPI } from '../services/api'
 import { useAuth } from '../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import { CreditCard, AlertCircle, CheckCircle2, FileText, Search, UserCheck } from 'lucide-react'
@@ -12,44 +13,7 @@ const PayTuition = () => {
   const [showConfirm, setShowConfirm] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
 
-  // Mock student database with tuition info
-  const mockStudents = {
-    'SV202401111': {
-      name: 'Trần Thị B',
-      class: 'CNTT K63',
-      tuitionDue: 15000000,
-      semester: 'Học kỳ 1 - Năm 2025',
-      dueDate: '2025-10-15'
-    },
-    'SV202401222': {
-      name: 'Lê Văn C',
-      class: 'KTPM K63',
-      tuitionDue: 15000000,
-      semester: 'Học kỳ 1 - Năm 2025',
-      dueDate: '2025-10-15'
-    },
-    'SV202401234': {
-      name: 'Nguyễn Văn A',
-      class: 'HTTT K63',
-      tuitionDue: 15000000,
-      semester: 'Học kỳ 1 - Năm 2025',
-      dueDate: '2025-10-15'
-    },
-    'SV202401333': {
-      name: 'Phạm Thị D',
-      class: 'KHMT K63',
-      tuitionDue: 12000000,
-      semester: 'Học kỳ 1 - Năm 2025',
-      dueDate: '2025-10-15'
-    },
-    'SV202401444': {
-      name: 'Hoàng Văn E',
-      class: 'MMT K63',
-      tuitionDue: 15000000,
-      semester: 'Học kỳ 1 - Năm 2025',
-      dueDate: '2025-10-15'
-    },
-  }
+  // Dữ liệu sẽ lấy từ API student-service
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('vi-VN', {
@@ -58,14 +22,26 @@ const PayTuition = () => {
     }).format(amount)
   }
 
-  const handleSearchStudent = () => {
-    const info = mockStudents[studentId]
-    if (info) {
-      setStudentInfo(info)
-      setDescription(`Học phí ${info.semester} - ${info.name} (${studentId})`)
-    } else {
+  const handleSearchStudent = async () => {
+    if (!studentId) return
+
+    try {
+      const numericIdCandidate = String(studentId).match(/\d+/)?.[0]
+      const lookupId = numericIdCandidate ? numericIdCandidate : studentId
+
+      const res = await studentAPI.getById(lookupId)
+      const mapped = {
+        name: res.fullname,
+        class: res.major,
+        tuitionDue: res.tuitionfee,
+        semester: 'Học kỳ hiện tại',
+        dueDate: '—'
+      }
+      setStudentInfo(mapped)
+      setDescription(`Học phí ${mapped.semester} - ${mapped.name} (${studentId})`)
+    } catch (err) {
       setStudentInfo(null)
-      alert('Không tìm thấy sinh viên với mã này hoặc sinh viên đã thanh toán học phí!')
+      alert('Không tìm thấy sinh viên. Vui lòng kiểm tra lại mã hoặc thử lại sau!')
     }
   }
 

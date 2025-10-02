@@ -29,6 +29,15 @@ export const authAPI = {
   },
 }
 
+// Student API
+export const studentAPI = {
+  getById: async (id) => {
+    return authenticatedFetch(`${API_BASE_URL}/ibanking/tuition/students/${id}`, {
+      method: 'GET',
+    })
+  },
+}
+
 // Get stored token
 export const getToken = () => {
   return localStorage.getItem('token')

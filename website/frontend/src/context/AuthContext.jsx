@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react'
+import { authAPI, setToken, removeToken, getToken } from '../services/api'
 
 const AuthContext = createContext(null)
 
@@ -18,9 +19,10 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     // Check if user is logged in from localStorage
     const storedUser = localStorage.getItem('user')
+    const storedToken = getToken()
     const storedTransactions = localStorage.getItem('transactions')
     
-    if (storedUser) {
+    if (storedUser && storedToken) {
       setUser(JSON.parse(storedUser))
       setIsAuthenticated(true)
     }
@@ -36,17 +38,17 @@ export const AuthProvider = ({ children }) => {
           type: 'Thanh toán học phí',
           amount: 15000000,
           status: 'Thành công',
-          recipient: 'SV202401234',
-          description: 'Học phí học kỳ 1 năm 2025'
+          recipient: 'SV202401111',
+          description: 'Học phí Học kỳ 1 - Năm 2025 - Trần Thị B (SV202401111)'
         },
         {
           id: 'TXN002',
           date: '2025-08-20',
-          type: 'Thanh toán học phí',
+          type: 'Thanh toán cho SV khác',
           amount: 15000000,
           status: 'Thành công',
-          recipient: 'SV202401234',
-          description: 'Học phí học kỳ 2 năm 2024'
+          recipient: 'SV202401222',
+          description: 'Học phí Học kỳ 2 - Năm 2024 - Thanh toán cho Lê Văn C (SV202401222)'
         }
       ]
       setTransactions(sampleTransactions)
@@ -54,28 +56,43 @@ export const AuthProvider = ({ children }) => {
     }
   }, [])
 
-  const login = (accountNumber, password) => {
-    // Demo login - accept any non-empty credentials
-    if (accountNumber && password) {
+  const login = async (accountNumber, password) => {
+    try {
+      // Call auth API
+      const response = await authAPI.login(accountNumber, password)
+      
+      // Extract user data from response
       const userData = {
-        name: 'Nguyễn Văn A',
+        name: response.fullName,
         accountNumber: accountNumber,
-        studentId: 'SV202401234',
-        balance: 50000000,
-        email: 'nguyenvana@student.edu.vn'
+        balance: response.balance,
+        email: response.email,
+        phoneNumber: response.phoneNumber
       }
+      
+      // Store token
+      setToken(response.token)
+      
+      // Update state
       setUser(userData)
       setIsAuthenticated(true)
       localStorage.setItem('user', JSON.stringify(userData))
+      
       return { success: true }
+    } catch (error) {
+      console.error('Login error:', error)
+      return { 
+        success: false, 
+        message: error.message || 'Đăng nhập thất bại. Vui lòng kiểm tra lại số tài khoản và mật khẩu.' 
+      }
     }
-    return { success: false, message: 'Số tài khoản hoặc mật khẩu không đúng' }
   }
 
   const logout = () => {
     setUser(null)
     setIsAuthenticated(false)
     localStorage.removeItem('user')
+    removeToken()
   }
 
   const addTransaction = (transaction) => {

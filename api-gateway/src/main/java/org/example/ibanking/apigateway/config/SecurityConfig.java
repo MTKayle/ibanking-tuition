@@ -7,8 +7,6 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
-// Cấu hình bảo mật cho API Gateway
-// Cho phép truy cập không cần xác thực đến các endpoint đăng nhập
 @Configuration
 @Order(0)
 public class SecurityConfig {
@@ -17,10 +15,14 @@ public class SecurityConfig {
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         http.csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(exchanges -> exchanges
-                        .pathMatchers("/ibanking/tuition/auth/**").permitAll()   // cho phép login
-                        .anyExchange().authenticated()          // còn lại bắt buộc JWT
+                        // Cho phép endpoint login
+                        .pathMatchers("/ibanking/tuition/auth/**").permitAll()
+                        // Cho phép preflight CORS request
+                        .pathMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
+                        // Các request còn lại bắt buộc JWT
+                        .anyExchange().authenticated()
                 )
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> {}));
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
 
         return http.build();
     }

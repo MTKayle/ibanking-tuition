@@ -4,6 +4,7 @@ color 0A
 
 echo ========================================
 echo   iBanking - He thong thanh toan hoc phi
+echo   With Beautiful Animations ^& Effects
 echo ========================================
 echo.
 

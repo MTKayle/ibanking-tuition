@@ -63,12 +63,19 @@ const Dashboard = () => {
   return (
     <div className="space-y-6">
       {/* Welcome Banner */}
-      <div className="bg-gradient-to-r from-primary-600 to-indigo-600 rounded-2xl shadow-xl p-8 text-white">
-        <h2 className="text-3xl font-bold mb-2">Xin chào, {user?.name}!</h2>
-        <p className="text-blue-100 mb-4">Chào mừng bạn đến với hệ thống thanh toán học phí iBanking</p>
-        <div className="flex items-baseline space-x-2">
-          <span className="text-blue-100">Số dư khả dụng:</span>
-          <span className="text-3xl font-bold">{formatCurrency(user?.balance)}</span>
+      <div className="bg-gradient-to-r from-primary-600 to-indigo-600 rounded-2xl shadow-xl p-8 text-white animate-fade-in relative overflow-hidden">
+        {/* Animated background */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white rounded-full blur-3xl animate-blob"></div>
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-white rounded-full blur-3xl animate-blob animation-delay-2000"></div>
+        </div>
+        <div className="relative z-10">
+          <h2 className="text-3xl font-bold mb-2">Xin chào, {user?.name}!</h2>
+          <p className="text-blue-100 mb-4">Chào mừng bạn đến với hệ thống thanh toán học phí iBanking</p>
+          <div className="flex items-baseline space-x-2">
+            <span className="text-blue-100">Số dư khả dụng:</span>
+            <span className="text-3xl font-bold animate-counter">{formatCurrency(user?.balance)}</span>
+          </div>
         </div>
       </div>
 
@@ -77,7 +84,7 @@ const Dashboard = () => {
         {stats.map((stat, index) => {
           const Icon = stat.icon
           return (
-            <div key={index} className="bg-white rounded-xl shadow-md p-6">
+            <div key={index} className="bg-white rounded-xl shadow-md p-6 animate-slide-up hover:shadow-xl transition-all duration-300 transform hover:scale-105" style={{ animationDelay: `${index * 100}ms` }}>
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600 mb-1">{stat.label}</p>
@@ -93,7 +100,7 @@ const Dashboard = () => {
       </div>
 
       {/* Quick Actions */}
-      <div>
+      <div className="animate-fade-in animation-delay-200">
         <h3 className="text-xl font-bold text-gray-800 mb-4">Thao tác nhanh</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {quickActions.map((action, index) => {
@@ -102,7 +109,8 @@ const Dashboard = () => {
               <Link
                 key={index}
                 to={action.link}
-                className="bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition-all transform hover:scale-[1.02] group"
+                className="bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] group animate-slide-up"
+                style={{ animationDelay: `${200 + index * 100}ms` }}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
@@ -121,16 +129,16 @@ const Dashboard = () => {
       </div>
 
       {/* Recent Transactions */}
-      <div>
+      <div className="animate-fade-in animation-delay-400">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-xl font-bold text-gray-800">Giao dịch gần đây</h3>
-          <Link to="/history" className="text-primary-600 hover:text-primary-700 font-medium text-sm flex items-center space-x-1">
+          <Link to="/history" className="text-primary-600 hover:text-primary-700 font-medium text-sm flex items-center space-x-1 transition-all hover:scale-105">
             <span>Xem tất cả</span>
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
         
-        <div className="bg-white rounded-xl shadow-md overflow-hidden">
+        <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
           {recentTransactions.length > 0 ? (
             <div className="divide-y divide-gray-100">
               {recentTransactions.map((transaction) => (

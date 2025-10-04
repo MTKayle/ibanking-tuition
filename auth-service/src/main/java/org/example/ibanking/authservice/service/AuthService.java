@@ -5,4 +5,5 @@ import org.example.ibanking.authservice.dto.LoginResponse;
 
 public interface AuthService {
     LoginResponse authenticate(LoginRequest loginRequest);
+
 }

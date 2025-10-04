@@ -2,6 +2,7 @@ package org.example.ibanking.studentservice.service.impl;
 
 import org.example.ibanking.studentservice.dto.StudentResponse;
 import org.example.ibanking.studentservice.entity.StudentEntity;
+import org.example.ibanking.studentservice.entity.TuitionEntity;
 import org.example.ibanking.studentservice.repository.StudentRepository;
 import org.example.ibanking.studentservice.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ public class StudentServiceImpl implements StudentService {
 
     public StudentResponse getStudentById(Long id) {
 
-        StudentEntity studentEntity = studentRepository.findById(id).orElse(null);
+        StudentEntity studentEntity = studentRepository.findByIdAndStatus(id, "UNPAID");
         //convert entity to dto
         if (studentEntity == null) {
             throw new RuntimeException("Student not found");
@@ -26,8 +27,8 @@ public class StudentServiceImpl implements StudentService {
         student.setFullname(studentEntity.getFullname());
         student.setEmail(studentEntity.getEmail());
         student.setMajor(studentEntity.getMajor());
-        student.setTuitionfee(studentEntity.getTuitionfee());
-
+        student.setTuitionfee(studentEntity.getTuitionFees().stream().mapToDouble(TuitionEntity::getTuitionFee).sum());
+        student.setTuitionid(String.valueOf(studentEntity.getTuitionFees().get(0).getId()));
         return student;
 
     }

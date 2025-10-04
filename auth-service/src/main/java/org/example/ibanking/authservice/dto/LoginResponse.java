@@ -4,6 +4,8 @@ import lombok.Data;
 
 @Data
 public class LoginResponse {
+
+    private String userid;
     private String email;
     private String phoneNumber;
     private String fullName;
@@ -46,5 +48,12 @@ public class LoginResponse {
     }
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getUserid() {
+        return userid;
+    }
+    public void setUserid(String userid) {
+        this.userid = userid;
     }
 }

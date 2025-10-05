@@ -41,6 +41,19 @@ public class OtpServiceImpl implements OtpService {
         otpReponsitory.save(otpEntity);
     }
 
+    // Đánh dấu tất cả OTP cũ của cùng tuitionId là "đã dùng"
+    @Transactional
+    public void invalidateOldOtp(Long tuitionId) {
+        List<OtpEntity> oldOtp = otpReponsitory.findByTuitionId(tuitionId);
+
+        for (OtpEntity otp : oldOtp) {
+            if (!otp.isUsed()) {
+                otp.setUsed(true);
+                otpReponsitory.save(otp);
+            }
+        }
+    }
+
     @Override
     // Send OTP
     public OtpReponse sendOtp(OtpRequest otpRequest) {
@@ -48,23 +61,27 @@ public class OtpServiceImpl implements OtpService {
         EmailReponse emailReponse = new EmailReponse();
         EmailRequestOTP emailRequestOTP = new EmailRequestOTP();
 
-        // Lấy email và tạo OTP
-        String toEmail = otpRequest.getToEmail();
-        String otp = String.format("%06d", new Random().nextInt(999999));;
+        // 1️ Vô hiệu hóa OTP cũ
+        invalidateOldOtp(otpRequest.getTuitionId());
 
-        // Gửi OTP qua email
+        // 2️ Tạo OTP mới
+        String toEmail = otpRequest.getToEmail();
+        String otp = String.format("%06d", new Random().nextInt(999999));
+
+        // 3️ Gửi qua email
         emailRequestOTP.setToEmail(toEmail);
         emailRequestOTP.setOtp(otp);
-
-        OtpReponse otpReponse = new OtpReponse();
-
         emailReponse = emailClient.sendOtp(emailRequestOTP);
 
-        // Lưu OTP vào database
+        // 4️ Lưu vào DB
         saveOtp(otpRequest.getTuitionId(), otp);
+
+        // 5 Phản hồi
+        OtpReponse otpReponse = new OtpReponse();
         otpReponse.setSuccess(emailReponse.isSuccess());
         return otpReponse;
     }
+
 
     @Override
     // Verify OTP

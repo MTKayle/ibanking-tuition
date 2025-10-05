@@ -1,8 +1,11 @@
-package org.example.ibanking.otpservice.controllor;
+package org.example.ibanking.otpservice.controller;
 
 import org.example.ibanking.otpservice.dto.OtpReponse;
 import org.example.ibanking.otpservice.dto.OtpRequest;
+import org.example.ibanking.otpservice.dto.VerifyOtpReponse;
+import org.example.ibanking.otpservice.dto.VerifyOtpRequest;
 import org.example.ibanking.otpservice.service.Ipml.OtpServiceImpl;
+import org.example.ibanking.otpservice.service.OtpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,14 +15,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/ibanking/tuition/otp")
-public class OtpControllor {
+public class VerifyOtpContronller {
 
     @Autowired
     private OtpServiceImpl otpServiceImpl;
 
-    @PostMapping("/send")
-    public ResponseEntity<?> sendOtp(@RequestBody OtpRequest otpRequest) {
-        OtpReponse otpReponse = otpServiceImpl.sendOtp(otpRequest);
-        return ResponseEntity.ok(otpReponse);
+    @PostMapping("/verify")
+    public ResponseEntity<?> sendOtp(@RequestBody VerifyOtpRequest verifyOtpRequest) {
+        VerifyOtpReponse verifyOtpReponse = otpServiceImpl.verifyOtp(verifyOtpRequest);
+        return ResponseEntity.ok(verifyOtpReponse);
     }
 }

@@ -1,11 +1,11 @@
 package org.example.ibanking.otpservice.dto;
 
 import lombok.Data;
-
-import java.util.UUID;
+import lombok.Generated;
 
 @Data
-public class OtpRequest {
-    private String toEmail;
+@Generated
+public class VerifyOtpRequest {
+    private String otp;
     private Long tuitionId;
 }

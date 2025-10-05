@@ -1,4 +1,4 @@
-package org.example.ibanking.otpservice;
+package org.example.ibanking.otpservice.client.dto;
 
 import lombok.Data;
 import lombok.Generated;

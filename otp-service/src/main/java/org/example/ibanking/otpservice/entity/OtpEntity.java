@@ -21,7 +21,7 @@ public class OtpEntity {
     private UUID otpId;
 
     @Column(name = "txn_id", nullable = false)
-    private UUID paymentId;
+    private Long tuitionId;
 
     @Column(name = "used", nullable = false)
     private boolean used;

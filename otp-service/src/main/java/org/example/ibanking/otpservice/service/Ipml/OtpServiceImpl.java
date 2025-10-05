@@ -52,9 +52,6 @@ public class OtpServiceImpl implements OtpService {
         String toEmail = otpRequest.getToEmail();
         String otp = String.format("%06d", new Random().nextInt(999999));;
 
-        // Lưu OTP vào database
-        saveOtp(otpRequest.getTuitionId(), otp);
-
         // Gửi OTP qua email
         emailRequestOTP.setToEmail(toEmail);
         emailRequestOTP.setOtp(otp);
@@ -62,6 +59,9 @@ public class OtpServiceImpl implements OtpService {
         OtpReponse otpReponse = new OtpReponse();
 
         emailReponse = emailClient.sendOtp(emailRequestOTP);
+
+        // Lưu OTP vào database
+        saveOtp(otpRequest.getTuitionId(), otp);
         otpReponse.setSuccess(emailReponse.isSuccess());
         return otpReponse;
     }

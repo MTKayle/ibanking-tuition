@@ -5,5 +5,4 @@ import lombok.Data;
 @Data
 public class OtpReponse {
     private boolean success;
-    private String message;
 }

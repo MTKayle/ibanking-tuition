@@ -16,6 +16,7 @@ public class OtpController {
 
     @PostMapping("/send")
     public ResponseEntity<?> sendOtp(@RequestBody OtpRequest otpRequest) {
+        System.out.println("sendOtp");
         OtpReponse otpReponse = otpServiceImpl.sendOtp(otpRequest);
         return ResponseEntity.ok(otpReponse);
     }

@@ -10,5 +10,5 @@ import java.util.UUID;
 @Repository
 public interface OtpReponsitory extends JpaRepository<OtpEntity, UUID> {
     // tìm OTP theo mã giao dịch (txnId / tuitionId)
-    List<OtpEntity> findByTuitionId(Long tuitionId);
+    List<OtpEntity> findByTuitionIdAndUserId(Long tuitionId, UUID userId);
 }

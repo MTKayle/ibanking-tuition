@@ -44,9 +44,8 @@ public class OtpServiceImpl implements OtpService {
 
     // Đánh dấu tất cả OTP cũ của cùng tuitionId là "đã dùng"
     @Transactional
-    public void invalidateOldOtp(Long tuitionId) {
-        List<OtpEntity> oldOtp = otpReponsitory.findByTuitionId(tuitionId);
-
+    public void invalidateOldOtp(Long tuitionId, UUID userId) {
+        List<OtpEntity> oldOtp = otpReponsitory.findByTuitionIdAndUserId(tuitionId, userId);
         for (OtpEntity otp : oldOtp) {
             if (!otp.isUsed()) {
                 otp.setUsed(true);
@@ -63,7 +62,7 @@ public class OtpServiceImpl implements OtpService {
         EmailRequestOTP emailRequestOTP = new EmailRequestOTP();
 
         // 1️ Vô hiệu hóa OTP cũ
-        invalidateOldOtp(otpRequest.getTuitionId());
+        invalidateOldOtp(otpRequest.getTuitionId(), otpRequest.getUserId());
 
         // 2️ Tạo OTP mới
         String toEmail = otpRequest.getToEmail();
@@ -90,7 +89,7 @@ public class OtpServiceImpl implements OtpService {
         System.out.println("verifyOtp111111111");
         VerifyOtpReponse verifyOtpReponse = new VerifyOtpReponse();
         System.out.println(verifyOtpRequest.getTuitionId());
-        List<OtpEntity> listOtpEntity = otpReponsitory.findByTuitionId(verifyOtpRequest.getTuitionId());
+        List<OtpEntity> listOtpEntity = otpReponsitory.findByTuitionIdAndUserId(verifyOtpRequest.getTuitionId(), verifyOtpRequest.getUserId());
 
         // kiểm tra không có otp nào
         if (listOtpEntity.isEmpty()) {

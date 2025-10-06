@@ -1,5 +1,7 @@
 package org.example.ibanking.paymentservice.config;
 
+import org.example.ibanking.paymentservice.security.GatewaySecretFilter;
+import org.example.ibanking.paymentservice.security.JwtAuthFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,8 +18,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 @Configuration
 public class SecurityConfig {
 
-//    @Autowired
-//    private JwtAuthFilter jwtAuthFilter;
+    @Autowired
+    private JwtAuthFilter jwtAuthFilter;
+
+    @Autowired
+    GatewaySecretFilter gatewaySecretFilter;
 
 
     @Bean
@@ -26,17 +31,18 @@ public class SecurityConfig {
         return http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll() // Cho phép tất cả request không cần xác thực
+//                        .anyRequest().permitAll() // Cho phép tất cả request không cần xác thực
+                        .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//                .addFilterBefore(gatewaySecretFilter, UsernamePasswordAuthenticationFilter.class) // check x-secret header để đam bảo request từ API Gateway
-//                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class) // check JWT
+                .addFilterBefore(gatewaySecretFilter, UsernamePasswordAuthenticationFilter.class) // check x-secret header để đam bảo request từ API Gateway
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class) // check JWT
                 .build(); //
     }
 
-    // Bean để mã hóa mật khẩu sử dụng thuật toán BCrypt
-//    @Bean
-//    public PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
+//     Bean để mã hóa mật khẩu sử dụng thuật toán BCrypt
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }

@@ -29,6 +29,13 @@ spring:
           filters:
             - AddRequestHeader=X-Gateway-Secret,my-super-secret
 
+        - id: payment-service
+          uri: http://localhost:8085
+          predicates:
+            - Path=/ibanking/tuition/payments/**
+          filters:
+            - AddRequestHeader=X-Gateway-Secret,my-super-secret
+
       globalcors:
         corsConfigurations:
           '[/**]':

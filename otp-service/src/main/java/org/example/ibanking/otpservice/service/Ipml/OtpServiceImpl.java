@@ -28,7 +28,7 @@ public class OtpServiceImpl implements OtpService {
     private OtpReponsitory otpReponsitory;
 
     @Autowired
-    private final EmailClient emailClient;
+    private EmailClient emailClient;
     // Save OTP to database
     public  void saveOtp(Long tuitionId, String otp, UUID userId) {
         OtpEntity otpEntity = new OtpEntity();

@@ -1,4 +1,5 @@
-package org.example.ibanking.otpservice.dto;
+package org.example.ibanking.paymentservice.dto;
+
 
 import lombok.Data;
 import lombok.Generated;
@@ -36,3 +37,4 @@ public class VerifyOtpRequest {
         this.userId = userId;
     }
 }
+

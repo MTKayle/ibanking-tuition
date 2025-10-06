@@ -1,11 +1,13 @@
-package org.example.ibanking.otpservice.dto;
+package org.example.ibanking.paymentservice.dto;
+
+
 
 import lombok.Data;
 import lombok.Generated;
 
 @Data
 @Generated
-public class VerifyOtpReponse {
+public class VerifyOtpResponse {
     private boolean success;
     private String message;
 
@@ -25,3 +27,4 @@ public class VerifyOtpReponse {
         this.message = message;
     }
 }
+

@@ -1,4 +1,4 @@
-package org.example.ibanking.otpservice.dto;
+package org.example.ibanking.paymentservice.dto;
 
 import lombok.Data;
 import lombok.Generated;
@@ -7,17 +7,17 @@ import java.util.UUID;
 
 @Data
 @Generated
-public class VerifyOtpRequest {
-    private String otp;
+public class OtpRequest {
+    private String toEmail;
     private Long tuitionId;
     private UUID userId;
 
-    public String getOtp() {
-        return otp;
+    public String getToEmail() {
+        return toEmail;
     }
 
-    public void setOtp(String otp) {
-        this.otp = otp;
+    public void setToEmail(String toEmail) {
+        this.toEmail = toEmail;
     }
 
     public Long getTuitionId() {

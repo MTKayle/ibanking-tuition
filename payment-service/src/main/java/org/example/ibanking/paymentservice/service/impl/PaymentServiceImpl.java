@@ -1,9 +1,9 @@
 package org.example.ibanking.paymentservice.service.impl;
 
+import org.example.ibanking.paymentservice.client.OtpClient;
 import org.example.ibanking.paymentservice.client.StudentClient;
 import org.example.ibanking.paymentservice.client.UserClient;
-import org.example.ibanking.paymentservice.dto.PaymentRequest;
-import org.example.ibanking.paymentservice.dto.PaymentResponse;
+import org.example.ibanking.paymentservice.dto.*;
 import org.example.ibanking.paymentservice.entity.PaymentTransactionEntity;
 import org.example.ibanking.paymentservice.repository.PaymentTransactionRepository;
 import org.example.ibanking.paymentservice.service.PaymentService;
@@ -21,6 +21,9 @@ public class PaymentServiceImpl implements PaymentService {
     private StudentClient studentClient;
 
     @Autowired
+    private OtpClient otpClient;
+
+    @Autowired
     private PaymentTransactionRepository paymentTransactionRepository;
 
     /**
@@ -32,6 +35,17 @@ public class PaymentServiceImpl implements PaymentService {
      */
 
     public PaymentResponse payTuititon(PaymentRequest paymentRequest) {
+
+        //verify otp
+        VerifyOtpRequest verifyOtpRequest = new VerifyOtpRequest();
+        verifyOtpRequest.setOtp(paymentRequest.getOtp());
+        verifyOtpRequest.setUserId(paymentRequest.getPayerid());
+        verifyOtpRequest.setTuitionId(paymentRequest.getTuitionid());
+
+        boolean isOtpValid = verifyOtp(verifyOtpRequest);
+        if(!isOtpValid){
+            throw new RuntimeException("Invalid OTP");
+        }
         //1) deduct on user
         // check tuition status first
         ResponseEntity<String> statusResponse = studentClient.status(paymentRequest.getTuitionid());
@@ -103,5 +117,24 @@ public class PaymentServiceImpl implements PaymentService {
         response.setMessage("SUCCESS");
         response.setAmount(transaction.getAmount());
         return response;
+    }
+
+    public boolean sendOtp(OtpRequest otpRequest) {
+        // Dummy implementation for sending OTP
+        ResponseEntity<?> response = otpClient.sendOtp(otpRequest);
+        if(!response.getStatusCode().is2xxSuccessful()){
+            throw new RuntimeException("Failed to send OTP");
+        }
+
+        return true;
+    }
+
+    public boolean verifyOtp(VerifyOtpRequest verifyOtpRequest) {
+        // Dummy implementation for sending OTP
+        ResponseEntity<VerifyOtpResponse> response = otpClient.verifyOtp(verifyOtpRequest);
+        if(!response.getBody().isSuccess()){
+            throw new RuntimeException("Failed to verify OTP");
+        }
+        return true;
     }
 }

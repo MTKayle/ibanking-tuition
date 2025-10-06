@@ -37,4 +37,60 @@ public class OtpEntity {
 
     @Column(name = "expires_at", nullable = false)
     private LocalDateTime expiresAt;
+
+    public UUID getOtpId() {
+        return otpId;
+    }
+
+    public void setOtpId(UUID otpId) {
+        this.otpId = otpId;
+    }
+
+    public UUID getUserId() {
+        return userId;
+    }
+
+    public void setUserId(UUID userId) {
+        this.userId = userId;
+    }
+
+    public Long getTuitionId() {
+        return tuitionId;
+    }
+
+    public void setTuitionId(Long tuitionId) {
+        this.tuitionId = tuitionId;
+    }
+
+    public boolean isUsed() {
+        return used;
+    }
+
+    public void setUsed(boolean used) {
+        this.used = used;
+    }
+
+    public String getCodeHash() {
+        return codeHash;
+    }
+
+    public void setCodeHash(String codeHash) {
+        this.codeHash = codeHash;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getExpiresAt() {
+        return expiresAt;
+    }
+
+    public void setExpiresAt(LocalDateTime expiresAt) {
+        this.expiresAt = expiresAt;
+    }
 }

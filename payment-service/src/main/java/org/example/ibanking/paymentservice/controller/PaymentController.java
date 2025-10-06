@@ -1,5 +1,6 @@
 package org.example.ibanking.paymentservice.controller;
 
+import org.example.ibanking.paymentservice.dto.OtpRequest;
 import org.example.ibanking.paymentservice.dto.PaymentRequest;
 import org.example.ibanking.paymentservice.dto.PaymentResponse;
 import org.example.ibanking.paymentservice.service.PaymentService;
@@ -23,4 +24,12 @@ public class PaymentController {
         PaymentResponse resp = paymentService.payTuititon(req);
         return ResponseEntity.ok(resp);
     }
+
+    @PostMapping("/send-otp")
+    public ResponseEntity<String> sendOtp(@RequestBody OtpRequest otpRequest) {
+        // Dummy implementation for sending OTP
+        Boolean isSent = paymentService.sendOtp(otpRequest); // Assume OTP is sent successfully
+        return ResponseEntity.ok("OTP sent to " + otpRequest.getToEmail() + ": " + isSent);
+    }
+
 }

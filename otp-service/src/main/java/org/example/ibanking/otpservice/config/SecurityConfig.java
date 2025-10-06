@@ -23,6 +23,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/ibanking/tuition/otp/**").permitAll()
+//                        .requestMatchers("/ibanking/tuition/otp/internal/**").permitAll()
                         .anyRequest().denyAll()
                 )
                 .addFilterBefore(internalTokenFilter, UsernamePasswordAuthenticationFilter.class)

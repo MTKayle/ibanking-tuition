@@ -10,6 +10,7 @@ public class PaymentRequest {
     private UUID payerid;
     private Long tuitionid;
     private double amount;
+    private String otp;
 
     public Long getStudentid() {
         return studentid;
@@ -41,6 +42,13 @@ public class PaymentRequest {
 
     public void setAmount(double amount) {
         this.amount = amount;
+    }
+
+    public String getOtp() {
+        return otp;
+    }
+    public void setOtp(String otp) {
+        this.otp = otp;
     }
 
 

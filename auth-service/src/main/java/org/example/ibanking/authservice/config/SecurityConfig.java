@@ -29,6 +29,11 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/ibanking/tuition/auth/login").permitAll()
+                        .requestMatchers("/ibanking/tuition/users/internal/{id}/deduct").permitAll()
+                        .requestMatchers("/ibanking/tuition/users/internal/{id}/refund").permitAll()
+                        .requestMatchers("/ibanking/tuition/users/internal/{id}/refund").permitAll()
+                        .requestMatchers("/ibanking/tuition/users/internal/{id}/balance").permitAll()
+                        .requestMatchers("/ibanking/tuition/users/internal/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

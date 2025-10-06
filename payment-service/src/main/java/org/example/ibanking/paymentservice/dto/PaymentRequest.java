@@ -6,8 +6,44 @@ import java.util.UUID;
 
 @Data
 public class PaymentRequest {
-    private Long studentId;
-    private UUID PayerId;
+    private Long studentid;
+    private UUID payerid;
+    private Long tuitionid;
     private double amount;
+
+    public Long getStudentid() {
+        return studentid;
+    }
+
+    public void setStudentid(Long studentid) {
+        this.studentid = studentid;
+    }
+
+    public UUID getPayerid() {
+        return payerid;
+    }
+
+    public void setPayerid(UUID payerid) {
+        this.payerid = payerid;
+    }
+
+    public Long getTuitionid() {
+        return tuitionid;
+    }
+
+    public void setTuitionid(Long tuitionid) {
+        this.tuitionid = tuitionid;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+
+
 
 }

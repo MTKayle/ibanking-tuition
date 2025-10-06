@@ -47,22 +47,7 @@ public class StudentServiceImpl implements StudentService {
 
     }
 
-    @Transactional
-    public void markAsPaid(Long studentId) {
-        List<StudentEntity> studentEntity = studentRepository.findAllById(studentId);
 
-        if (studentEntity == null || studentEntity.isEmpty()) {
-            throw new RuntimeException("Student not found");
-        }
-
-        TuitionEntity tuition = tuitionRepository.findByStudentIdAndStatusForUpdate(studentId, "UNPAID");
-        if (tuition == null) {
-            throw new RuntimeException("Student is already marked as paid");
-        }
-
-        tuition.setStatus("PAID");
-        tuitionRepository.save(tuition);
-    }
 
 
 }

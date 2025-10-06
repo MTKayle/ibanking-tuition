@@ -20,6 +20,9 @@ public class OtpEntity {
     @Column(name = "otp_id", updatable = false, nullable = false)
     private UUID otpId;
 
+    @Column(name = "user_id", nullable = false)
+    private UUID userId;
+
     @Column(name = "txn_id", nullable = false)
     private Long tuitionId;
 

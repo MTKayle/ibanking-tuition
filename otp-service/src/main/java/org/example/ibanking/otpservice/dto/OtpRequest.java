@@ -8,4 +8,5 @@ import java.util.UUID;
 public class OtpRequest {
     private String toEmail;
     private Long tuitionId;
+    private UUID userId;
 }

@@ -30,11 +30,12 @@ public class OtpServiceImpl implements OtpService {
     @Autowired
     private final EmailClient emailClient;
     // Save OTP to database
-    public  void saveOtp(Long tuitionId, String otp) {
+    public  void saveOtp(Long tuitionId, String otp, UUID userId) {
         OtpEntity otpEntity = new OtpEntity();
         otpEntity.setTuitionId(tuitionId);
         System.out.println(otpEntity.getTuitionId());
         otpEntity.setUsed(false);
+        otpEntity.setUserId(userId); // giả sử userId là UUID ngẫu nhiên
         otpEntity.setCodeHash(otp); // mã hóa otp
         otpEntity.setCreatedAt(LocalDateTime.now());
         otpEntity.setExpiresAt(LocalDateTime.now().plusMinutes(5)); // hết hạn sau 1 phút
@@ -74,7 +75,7 @@ public class OtpServiceImpl implements OtpService {
         emailReponse = emailClient.sendOtp(emailRequestOTP);
 
         // 4️ Lưu vào DB
-        saveOtp(otpRequest.getTuitionId(), otp);
+        saveOtp(otpRequest.getTuitionId(), otp, otpRequest.getUserId());
 
         // 5 Phản hồi
         OtpReponse otpReponse = new OtpReponse();
@@ -86,6 +87,7 @@ public class OtpServiceImpl implements OtpService {
     @Override
     // Verify OTP
     public VerifyOtpReponse verifyOtp(VerifyOtpRequest verifyOtpRequest) {
+        System.out.println("verifyOtp111111111");
         VerifyOtpReponse verifyOtpReponse = new VerifyOtpReponse();
         System.out.println(verifyOtpRequest.getTuitionId());
         List<OtpEntity> listOtpEntity = otpReponsitory.findByTuitionId(verifyOtpRequest.getTuitionId());
@@ -108,6 +110,9 @@ public class OtpServiceImpl implements OtpService {
             }
             if (otpEntity.getExpiresAt().isBefore(LocalDateTime.now())) {
                 verify = false; // OTP đã hết hạn
+            }
+            if (!otpEntity.getUserId().equals(verifyOtpRequest.getUserId())) {
+                verify = false; // OTP không thuộc về user này
             }
 
             if (verify) {

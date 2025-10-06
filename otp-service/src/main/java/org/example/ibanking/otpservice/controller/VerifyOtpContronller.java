@@ -22,6 +22,7 @@ public class VerifyOtpContronller {
 
     @PostMapping("/verify")
     public ResponseEntity<?> sendOtp(@RequestBody VerifyOtpRequest verifyOtpRequest) {
+        System.out.println("verifyOtp");
         VerifyOtpReponse verifyOtpReponse = otpServiceImpl.verifyOtp(verifyOtpRequest);
         return ResponseEntity.ok(verifyOtpReponse);
     }

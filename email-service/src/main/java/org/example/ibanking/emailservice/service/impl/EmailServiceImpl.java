@@ -40,7 +40,7 @@ public class EmailServiceImpl implements EmailService {
                         "Vui lòng sử dụng mã OTP sau để hoàn tất quá trình xác thực:\n\n" +
                         "👉 Mã OTP của bạn: %s\n\n" +
                         "⚠️ Lưu ý:\n" +
-                        "- Mã OTP chỉ có hiệu lực trong vòng 1 phút.\n" +
+                        "- Mã OTP chỉ có hiệu lực trong vòng 5 phút.\n" +
                         "- Không chia sẻ mã này với bất kỳ ai để đảm bảo an toàn tài khoản.\n\n" +
                         "Trân trọng,\n",
                 otp

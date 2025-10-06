@@ -1,5 +1,6 @@
-package org.example.ibanking.emailservice.config;
+package org.example.ibanking.otpservice.config;
 
+import org.example.ibanking.otpservice.config.InternalTokenFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,7 +22,7 @@ public class SecurityConfig {
         return http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/ibanking/tuition/email/**").permitAll()
+                        .requestMatchers("/ibanking/tuition/otp/**").permitAll()
                         .anyRequest().denyAll()
                 )
                 .addFilterBefore(internalTokenFilter, UsernamePasswordAuthenticationFilter.class)

@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { studentAPI } from '../services/api'
+import { studentAPI, paymentAPI } from '../services/api'
 import { useAuth } from '../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
-import { CreditCard, AlertCircle, CheckCircle2, FileText, Search, UserCheck } from 'lucide-react'
+import { CreditCard, AlertCircle, CheckCircle2, FileText, Search, UserCheck, Loader2 } from 'lucide-react'
 
 const PayTuition = () => {
   const { user, addTransaction } = useAuth()
@@ -11,7 +11,11 @@ const PayTuition = () => {
   const [studentInfo, setStudentInfo] = useState(null)
   const [description, setDescription] = useState('')
   const [showConfirm, setShowConfirm] = useState(false)
+  const [showOtpModal, setShowOtpModal] = useState(false)
+  const [otp, setOtp] = useState('')
   const [showSuccess, setShowSuccess] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
 
   // Dữ liệu sẽ lấy từ API student-service
 
@@ -26,22 +30,28 @@ const PayTuition = () => {
     if (!studentId) return
 
     try {
+      setIsLoading(true)
       const numericIdCandidate = String(studentId).match(/\d+/)?.[0]
       const lookupId = numericIdCandidate ? numericIdCandidate : studentId
 
       const res = await studentAPI.getById(lookupId)
       const mapped = {
+        id: res.id,
         name: res.fullname,
         class: res.major,
         tuitionDue: res.tuitionfee,
+        tuitionId: res.tuitionid,
         semester: 'Học kỳ hiện tại',
         dueDate: '—'
       }
       setStudentInfo(mapped)
       setDescription(`Học phí ${mapped.semester} - ${mapped.name} (${studentId})`)
+      setError('')
     } catch (err) {
       setStudentInfo(null)
-      alert('Không tìm thấy sinh viên. Vui lòng kiểm tra lại mã hoặc thử lại sau!')
+      setError('Không tìm thấy sinh viên. Vui lòng kiểm tra lại mã hoặc thử lại sau!')
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -56,21 +66,77 @@ const PayTuition = () => {
     setShowConfirm(true)
   }
 
-  const confirmPayment = () => {
-    const transaction = {
-      type: 'Thanh toán học phí',
-      amount: studentInfo.tuitionDue,
-      recipient: studentId,
-      description: description
+  const confirmPayment = async () => {
+    try {
+      setIsLoading(true)
+      setError('')
+      
+      // Send OTP to user's email
+      const otpRequest = {
+        toEmail: user.email,
+        tuitionId: studentInfo.tuitionId,
+        userId: user.id
+      }
+      
+      await paymentAPI.sendOtp(otpRequest)
+      
+      // Show OTP input modal
+      setShowConfirm(false)
+      setShowOtpModal(true)
+    } catch (err) {
+      setError('Không thể gửi mã OTP. Vui lòng thử lại!')
+      console.error('Send OTP error:', err)
+    } finally {
+      setIsLoading(false)
     }
-    
-    addTransaction(transaction)
-    setShowConfirm(false)
-    setShowSuccess(true)
-    
-    setTimeout(() => {
-      navigate('/history')
-    }, 2000)
+  }
+
+  const confirmOtpAndPay = async () => {
+    if (!otp || otp.length !== 6) {
+      setError('Vui lòng nhập mã OTP gồm 6 chữ số!')
+      return
+    }
+
+    try {
+      setIsLoading(true)
+      setError('')
+      
+      // Call payment API
+      const paymentRequest = {
+        studentid: studentInfo.id,
+        payerid: user.id,
+        tuitionid: studentInfo.tuitionId,
+        amount: studentInfo.tuitionDue,
+        otp: otp
+      }
+      
+      const response = await paymentAPI.pay(paymentRequest)
+      
+      if (response.transactionId) {
+        // Create local transaction record
+        const transaction = {
+          type: 'Thanh toán học phí',
+          amount: studentInfo.tuitionDue,
+          recipient: studentId,
+          description: description
+        }
+        
+        addTransaction(transaction)
+        setShowOtpModal(false)
+        setShowSuccess(true)
+        
+        setTimeout(() => {
+          navigate('/history')
+        }, 2000)
+      } else {
+        setError(response.message || 'Thanh toán thất bại!')
+      }
+    } catch (err) {
+      setError('Mã OTP không chính xác hoặc đã hết hạn. Vui lòng thử lại!')
+      console.error('Payment error:', err)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -133,18 +199,29 @@ const PayTuition = () => {
                   className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
                   required
                 />
-                <button
-                  type="button"
-                  onClick={handleSearchStudent}
-                  className="px-6 py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors"
-                >
-                  Tra cứu
-                </button>
+              <button
+                type="button"
+                onClick={handleSearchStudent}
+                disabled={isLoading}
+                className="px-6 py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[100px]"
+              >
+                {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Tra cứu'}
+              </button>
               </div>
               <p className="mt-2 text-sm text-gray-500">
                 💡 MSSV demo: SV202401111, SV202401222, SV202401234, SV202401333, SV202401444
               </p>
             </div>
+
+            {/* Error Message */}
+            {error && !studentInfo && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start space-x-2">
+                <AlertCircle className="h-5 w-5 text-red-500 mt-0.5" />
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-red-800">{error}</p>
+                </div>
+              </div>
+            )}
 
             {/* Student Info Display */}
             {studentInfo && (
@@ -218,10 +295,17 @@ const PayTuition = () => {
             {studentInfo && (
               <button
                 type="submit"
-                disabled={studentInfo.tuitionDue > user?.balance}
-                className="w-full bg-primary-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                disabled={studentInfo.tuitionDue > user?.balance || isLoading}
+                className="w-full bg-primary-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center"
               >
-                Thanh toán ngay
+                {isLoading ? (
+                  <>
+                    <Loader2 className="h-5 w-5 animate-spin mr-2" />
+                    Đang xử lý...
+                  </>
+                ) : (
+                  'Thanh toán ngay'
+                )}
               </button>
             )}
           </form>
@@ -251,18 +335,103 @@ const PayTuition = () => {
                 <span className="font-bold text-primary-600">{formatCurrency(studentInfo.tuitionDue)}</span>
               </div>
             </div>
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-start space-x-2">
+                <AlertCircle className="h-4 w-4 text-red-500 mt-0.5" />
+                <p className="text-sm text-red-800">{error}</p>
+              </div>
+            )}
             <div className="flex space-x-3">
               <button
-                onClick={() => setShowConfirm(false)}
-                className="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+                onClick={() => {
+                  setShowConfirm(false)
+                  setError('')
+                }}
+                disabled={isLoading}
+                className="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-lg font-medium hover:bg-gray-300 transition-colors disabled:opacity-50"
               >
                 Hủy
               </button>
               <button
                 onClick={confirmPayment}
-                className="flex-1 bg-primary-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-primary-700 transition-colors"
+                disabled={isLoading}
+                className="flex-1 bg-primary-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-primary-700 transition-colors disabled:opacity-50 flex items-center justify-center"
               >
-                Xác nhận
+                {isLoading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                    Đang gửi OTP...
+                  </>
+                ) : (
+                  'Xác nhận'
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* OTP Modal */}
+      {showOtpModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full">
+            <h3 className="text-xl font-bold text-gray-800 mb-2">Xác thực OTP</h3>
+            <p className="text-sm text-gray-600 mb-6">
+              Mã OTP đã được gửi đến email: <span className="font-semibold">{user?.email}</span>
+            </p>
+            
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Nhập mã OTP (6 chữ số)
+              </label>
+              <input
+                type="text"
+                maxLength="6"
+                value={otp}
+                onChange={(e) => {
+                  const value = e.target.value.replace(/\D/g, '')
+                  setOtp(value)
+                  setError('')
+                }}
+                placeholder="000000"
+                className="w-full px-4 py-3 text-center text-2xl tracking-widest border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
+                autoFocus
+              />
+            </div>
+
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4 flex items-start space-x-2">
+                <AlertCircle className="h-4 w-4 text-red-500 mt-0.5" />
+                <p className="text-sm text-red-800">{error}</p>
+              </div>
+            )}
+
+            <div className="flex space-x-3">
+              <button
+                onClick={() => {
+                  setShowOtpModal(false)
+                  setOtp('')
+                  setError('')
+                  setShowConfirm(true)
+                }}
+                disabled={isLoading}
+                className="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-lg font-medium hover:bg-gray-300 transition-colors disabled:opacity-50"
+              >
+                Hủy
+              </button>
+              <button
+                onClick={confirmOtpAndPay}
+                disabled={isLoading || otp.length !== 6}
+                className="flex-1 bg-primary-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-primary-700 transition-colors disabled:opacity-50 flex items-center justify-center"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                    Đang thanh toán...
+                  </>
+                ) : (
+                  'Xác nhận thanh toán'
+                )}
               </button>
             </div>
           </div>

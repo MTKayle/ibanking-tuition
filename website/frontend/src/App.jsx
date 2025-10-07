@@ -3,8 +3,7 @@ import { AuthProvider, useAuth } from './context/AuthContext'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import PayTuition from './pages/PayTuition'
-import PayForOther from './pages/PayForOther'
-import TransactionHistory from './pages/TransactionHistory'
+import PaymentHistory from './pages/PaymentHistory'
 import Layout from './components/Layout'
 
 function PrivateRoute({ children }) {
@@ -25,8 +24,7 @@ function App() {
           }>
             <Route index element={<Dashboard />} />
             <Route path="pay-tuition" element={<PayTuition />} />
-            <Route path="pay-for-other" element={<PayForOther />} />
-            <Route path="history" element={<TransactionHistory />} />
+            <Route path="history" element={<PaymentHistory />} />
           </Route>
         </Routes>
       </Router>

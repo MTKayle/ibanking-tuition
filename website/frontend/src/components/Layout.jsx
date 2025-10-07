@@ -3,7 +3,6 @@ import { useAuth } from '../context/AuthContext'
 import { 
   LayoutDashboard, 
   CreditCard, 
-  Users, 
   History, 
   LogOut,
   Menu,
@@ -26,7 +25,6 @@ const Layout = () => {
   const navItems = [
     { path: '/', label: 'Tổng quan', icon: LayoutDashboard },
     { path: '/pay-tuition', label: 'Thanh toán học phí', icon: CreditCard },
-    { path: '/pay-for-other', label: 'Thanh toán cho SV khác', icon: Users },
     { path: '/history', label: 'Lịch sử giao dịch', icon: History },
   ]
 

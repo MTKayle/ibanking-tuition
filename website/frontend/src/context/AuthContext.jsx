@@ -12,49 +12,84 @@ export const useAuth = () => {
 }
 
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [user, setUser] = useState(null)
-  const [transactions, setTransactions] = useState([])
-
-  useEffect(() => {
-    // Check if user is logged in from localStorage
+  // Initialize state from localStorage immediately to prevent flash
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
     const storedUser = localStorage.getItem('user')
     const storedToken = getToken()
+    return !!(storedUser && storedToken)
+  })
+  
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem('user')
+    return storedUser ? JSON.parse(storedUser) : null
+  })
+  
+  const [transactions, setTransactions] = useState(() => {
     const storedTransactions = localStorage.getItem('transactions')
-    
-    if (storedUser && storedToken) {
-      setUser(JSON.parse(storedUser))
-      setIsAuthenticated(true)
-    }
-    
     if (storedTransactions) {
-      setTransactions(JSON.parse(storedTransactions))
-    } else {
-      // Sample transactions
-      const sampleTransactions = [
-        {
-          id: 'TXN001',
-          date: '2025-09-15',
-          type: 'Thanh toán học phí',
-          amount: 15000000,
-          status: 'Thành công',
-          recipient: 'SV202401111',
-          description: 'Học phí Học kỳ 1 - Năm 2025 - Trần Thị B (SV202401111)'
-        },
-        {
-          id: 'TXN002',
-          date: '2025-08-20',
-          type: 'Thanh toán cho SV khác',
-          amount: 15000000,
-          status: 'Thành công',
-          recipient: 'SV202401222',
-          description: 'Học phí Học kỳ 2 - Năm 2024 - Thanh toán cho Lê Văn C (SV202401222)'
-        }
-      ]
-      setTransactions(sampleTransactions)
-      localStorage.setItem('transactions', JSON.stringify(sampleTransactions))
+      return JSON.parse(storedTransactions)
     }
-  }, [])
+    
+    // Sample transactions
+    const sampleTransactions = [
+      {
+        id: 'TXN001',
+        date: '2025-09-15',
+        type: 'Thanh toán học phí',
+        amount: 15000000,
+        status: 'Thành công',
+        recipient: 'SV202401111',
+        description: 'Học phí Học kỳ 1 - Năm 2025 - Trần Thị B (SV202401111)'
+      },
+      {
+        id: 'TXN002',
+        date: '2025-08-20',
+        type: 'Thanh toán cho SV khác',
+        amount: 15000000,
+        status: 'Thành công',
+        recipient: 'SV202401222',
+        description: 'Học phí Học kỳ 2 - Năm 2024 - Thanh toán cho Lê Văn C (SV202401222)'
+      }
+    ]
+    localStorage.setItem('transactions', JSON.stringify(sampleTransactions))
+    return sampleTransactions
+  })
+
+  // Fetch latest balance when component mounts
+  useEffect(() => {
+    const fetchLatestBalance = async () => {
+      const storedUser = localStorage.getItem('user')
+      const storedToken = getToken()
+      
+      if (storedUser && storedToken) {
+        try {
+          const userData = JSON.parse(storedUser)
+          const latestBalance = await authAPI.getBalance(userData.id)
+          
+          // Update user with latest balance
+          const updatedUser = {
+            ...userData,
+            balance: latestBalance
+          }
+          setUser(updatedUser)
+          localStorage.setItem('user', JSON.stringify(updatedUser))
+        } catch (error) {
+          console.error('Error fetching balance:', error)
+          // If token is invalid, clear everything
+          if (error.message && (error.message.includes('401') || error.message.includes('Unauthorized'))) {
+            setUser(null)
+            setIsAuthenticated(false)
+            localStorage.removeItem('user')
+            localStorage.removeItem('transactions')
+            removeToken()
+          }
+        }
+      }
+    }
+
+    fetchLatestBalance()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // Run once on mount
 
   const login = async (accountNumber, password) => {
     try {
@@ -63,6 +98,7 @@ export const AuthProvider = ({ children }) => {
       
       // Extract user data from response
       const userData = {
+        id: response.userid,
         name: response.fullName,
         accountNumber: accountNumber,
         balance: response.balance,
@@ -92,6 +128,7 @@ export const AuthProvider = ({ children }) => {
     setUser(null)
     setIsAuthenticated(false)
     localStorage.removeItem('user')
+    localStorage.removeItem('transactions')
     removeToken()
   }
 

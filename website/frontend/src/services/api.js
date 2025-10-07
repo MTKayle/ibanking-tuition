@@ -27,12 +27,41 @@ export const authAPI = {
     })
     return handleResponse(response)
   },
+  
+  getBalance: async (userId) => {
+    return authenticatedFetch(`${API_BASE_URL}/ibanking/tuition/users/internal/${userId}/balance`, {
+      method: 'GET',
+    })
+  },
 }
 
 // Student API
 export const studentAPI = {
   getById: async (id) => {
     return authenticatedFetch(`${API_BASE_URL}/ibanking/tuition/students/${id}`, {
+      method: 'GET',
+    })
+  },
+}
+
+// Payment API
+export const paymentAPI = {
+  sendOtp: async (otpRequest) => {
+    return authenticatedFetch(`${API_BASE_URL}/ibanking/tuition/payments/send-otp`, {
+      method: 'POST',
+      body: JSON.stringify(otpRequest),
+    })
+  },
+  
+  pay: async (paymentRequest) => {
+    return authenticatedFetch(`${API_BASE_URL}/ibanking/tuition/payments/pay`, {
+      method: 'POST',
+      body: JSON.stringify(paymentRequest),
+    })
+  },
+
+  getHistory: async (payerId) => {
+    return authenticatedFetch(`${API_BASE_URL}/ibanking/tuition/payments/history/${payerId}`, {
       method: 'GET',
     })
   },

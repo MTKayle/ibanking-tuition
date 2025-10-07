@@ -29,7 +29,8 @@ public class TuitionServiceImpl implements TuitionService {
         }
 
         TuitionEntity tuition = tuitionRepository.findByIdAndStudentIdForUpdate(studentId, tuitionId);
-        if (tuition == null || !"UNPAID".equals(tuition.getStatus())) {
+        if (tuition == null || !"PENDING".equals(tuition.getStatus()) ||
+            "PAID".equals(tuition.getStatus())) {
             throw new RuntimeException("Student is already marked as paid");
         }
 
@@ -37,12 +38,19 @@ public class TuitionServiceImpl implements TuitionService {
         tuitionRepository.save(tuition);
     }
 
-    @Transactional(readOnly = true)
-    public String getStatus(Long tuitionId) {
-        TuitionEntity tuition = tuitionRepository.findById(tuitionId).orElse(null);
+    @Transactional
+    public boolean isUnpaid(Long tuitionId) {
+        TuitionEntity tuition = tuitionRepository.findByIdForUpdate(tuitionId);
         if (tuition == null) {
             throw new RuntimeException("Tuition not found");
         }
-        return tuition.getStatus();
+        if(!"UNPAID".equals(tuition.getStatus())) {
+            throw new RuntimeException("Tuition is already paid");
+        }
+
+        tuition.setStatus("PENDING");
+        tuitionRepository.save(tuition);
+
+        return true;
     }
 }

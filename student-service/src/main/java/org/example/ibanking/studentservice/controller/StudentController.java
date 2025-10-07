@@ -33,8 +33,8 @@ public class StudentController {
     }
 
     @GetMapping("/internal/{tuitionId}/status")
-    public ResponseEntity<String> status(@PathVariable Long tuitionId) {
-        return ResponseEntity.ok(tuitionService.getStatus(tuitionId));
+    public ResponseEntity<Boolean> status(@PathVariable Long tuitionId) {
+        return ResponseEntity.ok(tuitionService.isUnpaid(tuitionId));
     }
 
 }

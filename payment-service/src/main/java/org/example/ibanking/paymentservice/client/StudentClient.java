@@ -14,6 +14,6 @@ public interface StudentClient {
     ResponseEntity<String> markPaid(@RequestParam Long studentId, @PathVariable("id") Long tuitionId);
 
     @GetMapping("/ibanking/tuition/students/internal/{id}/status")
-    ResponseEntity<String> status(@PathVariable("id") Long tuitionId);
+    ResponseEntity<Boolean> status(@PathVariable("id") Long tuitionId);
 
 }

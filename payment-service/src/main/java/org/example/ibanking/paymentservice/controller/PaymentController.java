@@ -21,8 +21,16 @@ public class PaymentController {
     @PostMapping("/pay")
     public ResponseEntity<PaymentResponse> pay(@RequestBody PaymentRequest req) {
         System.out.println("da nhan" + req);
-        PaymentResponse resp = paymentService.payTuititon(req);
-        return ResponseEntity.ok(resp);
+        try {
+            PaymentResponse resp = paymentService.payTuition(req);
+            return ResponseEntity.ok(resp);
+        } catch (Exception e) {
+            PaymentResponse errorResp = new PaymentResponse();
+            errorResp.setTransactionId(null);
+            errorResp.setMessage("TIMEOUT or FAILED: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(errorResp);
+        }
+
     }
 
     @PostMapping("/send-otp")

@@ -14,6 +14,11 @@ public interface TuitionRepository extends JpaRepository<TuitionEntity, Long> {
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT t FROM TuitionEntity t " +
+            "WHERE t.id = :id")
+    TuitionEntity findByIdForUpdate(long id);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT t FROM TuitionEntity t " +
             "WHERE t.id = :id AND t.student.id = :studentId")
     TuitionEntity findByIdAndStudentIdForUpdate(long studentId, long id);
 

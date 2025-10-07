@@ -4,4 +4,5 @@ import org.example.ibanking.studentservice.dto.StudentResponse;
 
 public interface StudentService {
     StudentResponse getStudentById(Long id);
+
 }

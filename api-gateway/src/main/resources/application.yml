@@ -29,10 +29,10 @@ spring:
           filters:
             - AddRequestHeader=X-Gateway-Secret,my-super-secret
 
-        - id: otp-service
+        - id: payment-service
           uri: http://localhost:8085
           predicates:
-            - Path=/ibanking/tuition/otp/**
+            - Path=/ibanking/tuition/payments/**
           filters:
             - AddRequestHeader=X-Gateway-Secret,my-super-secret
 

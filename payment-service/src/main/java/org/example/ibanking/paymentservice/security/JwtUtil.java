@@ -1,4 +1,5 @@
-package org.example.ibanking.otpservice.security;
+package org.example.ibanking.paymentservice.security;
+
 
 
 import io.jsonwebtoken.security.Keys;

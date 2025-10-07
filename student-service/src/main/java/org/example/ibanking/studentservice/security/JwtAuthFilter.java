@@ -28,6 +28,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException{
+
+        String path = request.getRequestURI();
+        // Bỏ qua check secret nếu là internal
+        if (path.contains("/internal/")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         // Extract the Authorization header from the request
         String authHeader = request.getHeader("Authorization");
         System.out.println(authHeader);

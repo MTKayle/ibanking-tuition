@@ -2,8 +2,12 @@ package org.example.ibanking.authservice.dto;
 
 import lombok.Data;
 
+import java.util.UUID;
+
 @Data
 public class LoginResponse {
+
+    private UUID userid;
     private String email;
     private String phoneNumber;
     private String fullName;
@@ -46,5 +50,13 @@ public class LoginResponse {
     }
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public UUID getUserid() {
+        return userid;
+    }
+
+    public void setUserid(UUID userid) {
+        this.userid = userid;
     }
 }

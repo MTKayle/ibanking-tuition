@@ -20,11 +20,4 @@ public class OtpController {
         OtpReponse otpReponse = otpServiceImpl.sendOtp(otpRequest);
         return ResponseEntity.ok(otpReponse);
     }
-
-    // Hủy OTP khi người dùng thoát giao dịch
-    @PostMapping("/cancel")
-    public ResponseEntity<String> cancelOtp(@RequestParam Long tuitionId) {
-        otpServiceImpl.invalidateOldOtp(tuitionId);
-        return ResponseEntity.ok("OTP canceled successfully");
-    }
 }

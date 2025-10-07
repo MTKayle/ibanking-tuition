@@ -23,6 +23,13 @@ public class GatewaySecretFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
+
+        String path = request.getRequestURI();
+        // Bỏ qua check secret nếu là internal
+        if (path.contains("/internal/")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         // Check request from API Gateway
         String secret = request.getHeader(HEADER);
         System.out.println("secret api:" + secret);

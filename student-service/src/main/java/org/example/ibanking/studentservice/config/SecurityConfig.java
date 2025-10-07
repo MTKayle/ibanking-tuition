@@ -30,6 +30,9 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/ibanking/tuition/auth/login").permitAll()
+                        .requestMatchers("/ibanking/tuition/students/internal/{id}/mark-paid").permitAll()
+                        .requestMatchers("/ibanking/tuition/students//internal/{id}/status").permitAll()
+                        .requestMatchers("/ibanking/tuition/students/internal/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

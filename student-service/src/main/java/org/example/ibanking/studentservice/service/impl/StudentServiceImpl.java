@@ -2,10 +2,16 @@ package org.example.ibanking.studentservice.service.impl;
 
 import org.example.ibanking.studentservice.dto.StudentResponse;
 import org.example.ibanking.studentservice.entity.StudentEntity;
+import org.example.ibanking.studentservice.entity.TuitionEntity;
 import org.example.ibanking.studentservice.repository.StudentRepository;
+import org.example.ibanking.studentservice.repository.TuitionRepository;
 import org.example.ibanking.studentservice.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class StudentServiceImpl implements StudentService {
@@ -13,24 +19,35 @@ public class StudentServiceImpl implements StudentService {
     @Autowired
     private StudentRepository studentRepository;
 
+    @Autowired
+    private TuitionRepository tuitionRepository;
+
     public StudentResponse getStudentById(Long id) {
 
-        StudentEntity studentEntity = studentRepository.findById(id).orElse(null);
+        Optional<StudentEntity> studentEntity = studentRepository.findById(id);
         //convert entity to dto
-        if (studentEntity == null) {
+        if (studentEntity.isEmpty() || studentEntity.get().getId() == null) {
             throw new RuntimeException("Student not found");
         }
 
-        StudentResponse student = new StudentResponse();
-        student.setId(studentEntity.getId());
-        student.setFullname(studentEntity.getFullname());
-        student.setEmail(studentEntity.getEmail());
-        student.setMajor(studentEntity.getMajor());
-        student.setTuitionfee(studentEntity.getTuitionfee());
+        TuitionEntity tuition = tuitionRepository.findByStudentIdAndStatus(id, "UNPAID");
 
-        return student;
+        if(tuition == null) {
+            throw new RuntimeException("Student already paid");
+        }
+
+        StudentResponse studentResponse = new StudentResponse();
+        studentResponse.setId(studentEntity.get().getId());
+        studentResponse.setFullname(studentEntity.get().getFullname());
+        studentResponse.setEmail(studentEntity.get().getEmail());
+        studentResponse.setMajor(studentEntity.get().getMajor());
+        studentResponse.setTuitionfee(tuition.getTuitionFee());
+        studentResponse.setTuitionid(tuition.getId());
+        return studentResponse;
 
     }
+
+
 
 
 }

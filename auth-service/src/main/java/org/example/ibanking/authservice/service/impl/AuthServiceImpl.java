@@ -48,6 +48,7 @@ public class AuthServiceImpl implements AuthService {
         user.setEmail(userEntity.getEmail());
         user.setPhoneNumber(userEntity.getPhonenumber());
         user.setBalance(userEntity.getBalance());
+        user.setUserid(userEntity.getId());
 
         return user;
     }

@@ -18,7 +18,7 @@ public class EmailControllor {
     @Autowired
     private EmailServiceImpl emailServiceImpl;
 
-    @PostMapping("/send-payment-mail")
+    @PostMapping("/payment")
     public ResponseEntity<EmailReponse> sendEmailPayment(@RequestBody EmailRequestPayment emailRequestPayment) {
         EmailReponse emailReponse = new EmailReponse();
         boolean isSent = emailServiceImpl.sendEmailPayment(emailRequestPayment);
@@ -26,7 +26,7 @@ public class EmailControllor {
         return ResponseEntity.ok(emailReponse);
     }
 
-    @PostMapping("/send-otp-mail")
+    @PostMapping("/otp")
     public ResponseEntity<EmailReponse> sendEmailOTP(@RequestBody EmailRequestOTP emailRequestOTP) {
         EmailReponse emailReponse = new EmailReponse();
         boolean isSent = emailServiceImpl.sendEmailOTP(emailRequestOTP);

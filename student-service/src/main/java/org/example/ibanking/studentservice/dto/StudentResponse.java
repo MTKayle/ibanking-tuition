@@ -10,5 +10,6 @@ public class StudentResponse {
     private String email;
     private String major;
     private double tuitionfee;
+    private Long tuitionid;
 
 }

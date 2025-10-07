@@ -53,6 +53,12 @@ export const paymentAPI = {
       body: JSON.stringify(paymentRequest),
     })
   },
+
+  getHistory: async (payerId) => {
+    return authenticatedFetch(`${API_BASE_URL}/ibanking/tuition/payments/history/${payerId}`, {
+      method: 'GET',
+    })
+  },
 }
 
 // Get stored token

@@ -96,21 +96,21 @@ const PaymentHistory = () => {
         }
       case 'FAILED_DEDUCT':
         return {
-          label: 'Thất bại - Trừ tiền',
+          label: 'Thất bại (Không trừ tiền)',
           color: 'bg-red-100 text-red-800',
           icon: XCircle,
           iconColor: 'text-red-600'
         }
       case 'FAILED_MARKPAID_REFUNDED':
         return {
-          label: 'Đã hoàn tiền',
+          label: 'Thất bại (Đã hoàn tiền)',
           color: 'bg-yellow-100 text-yellow-800',
           icon: XCircle,
           iconColor: 'text-yellow-600'
         }
       case 'CRITICAL_REFUND_FAILED':
         return {
-          label: 'Nghiêm trọng',
+          label: 'Thất bại nghiêm trọng',
           color: 'bg-red-100 text-red-800',
           icon: XCircle,
           iconColor: 'text-red-600'
@@ -291,9 +291,9 @@ const PaymentHistory = () => {
                 >
                   <option value="all">Tất cả</option>
                   <option value="SUCCESS">Thành công</option>
-                  <option value="FAILED_DEDUCT">Thất bại - Trừ tiền</option>
-                  <option value="FAILED_MARKPAID_REFUNDED">Đã hoàn tiền</option>
-                  <option value="CRITICAL_REFUND_FAILED">Nghiêm trọng</option>
+                  <option value="FAILED_DEDUCT">Thất bại (Không trừ tiền)</option>
+                  <option value="FAILED_MARKPAID_REFUNDED">Thất bại (Đã hoàn tiền)</option>
+                  <option value="CRITICAL_REFUND_FAILED">Thất bại nghiêm trọng</option>
                 </select>
               </div>
 
@@ -390,8 +390,12 @@ const PaymentHistory = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right">
-                        <span className="text-sm font-bold text-red-600 bg-red-50 px-3 py-1 rounded-lg">
-                          -{formatCurrency(transaction.amount)}
+                        <span className={`text-sm font-bold px-3 py-1 rounded-lg ${
+                          transaction.status === 'SUCCESS' 
+                            ? 'text-red-600 bg-red-50' 
+                            : 'text-gray-500 bg-gray-50'
+                        }`}>
+                          -{formatCurrency(transaction.status === 'SUCCESS' ? transaction.amount : 0)}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-center">
@@ -458,7 +462,11 @@ const PaymentHistory = () => {
               </div>
               <div className="flex justify-between items-center pb-4 border-b">
                 <span className="text-gray-600">Số tiền:</span>
-                <span className="font-bold text-2xl text-red-600">-{formatCurrency(selectedTransaction.amount)}</span>
+                <span className={`font-bold text-2xl ${
+                  selectedTransaction.status === 'SUCCESS' ? 'text-red-600' : 'text-gray-500'
+                }`}>
+                  -{formatCurrency(selectedTransaction.status === 'SUCCESS' ? selectedTransaction.amount : 0)}
+                </span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-gray-600">Trạng thái:</span>

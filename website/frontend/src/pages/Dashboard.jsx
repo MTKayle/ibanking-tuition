@@ -2,7 +2,6 @@ import { useAuth } from '../context/AuthContext'
 import { Link } from 'react-router-dom'
 import { 
   CreditCard, 
-  Users, 
   TrendingUp, 
   Clock,
   ArrowRight,
@@ -27,13 +26,6 @@ const Dashboard = () => {
       icon: CreditCard,
       color: 'bg-blue-500',
       link: '/pay-tuition'
-    },
-    {
-      title: 'Thanh toán cho SV khác',
-      description: 'Thanh toán học phí cho sinh viên khác',
-      icon: Users,
-      color: 'bg-purple-500',
-      link: '/pay-for-other'
     }
   ]
 
@@ -102,7 +94,7 @@ const Dashboard = () => {
       {/* Quick Actions */}
       <div className="animate-fade-in animation-delay-200">
         <h3 className="text-xl font-bold text-gray-800 mb-4">Thao tác nhanh</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6">
           {quickActions.map((action, index) => {
             const Icon = action.icon
             return (

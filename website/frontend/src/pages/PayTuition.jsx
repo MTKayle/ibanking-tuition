@@ -16,6 +16,8 @@ const PayTuition = () => {
   const [showSuccess, setShowSuccess] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
+  const [isPaid, setIsPaid] = useState(false)
+  const [showInsufficientBalance, setShowInsufficientBalance] = useState(false)
 
   // Dữ liệu sẽ lấy từ API student-service
 
@@ -31,6 +33,7 @@ const PayTuition = () => {
 
     try {
       setIsLoading(true)
+      setIsPaid(false)
       const numericIdCandidate = String(studentId).match(/\d+/)?.[0]
       const lookupId = numericIdCandidate ? numericIdCandidate : studentId
 
@@ -49,7 +52,15 @@ const PayTuition = () => {
       setError('')
     } catch (err) {
       setStudentInfo(null)
-      setError('Không tìm thấy sinh viên. Vui lòng kiểm tra lại mã hoặc thử lại sau!')
+      // Check if error message indicates student already paid
+      const errorMessage = err.message || err.toString()
+      if (errorMessage.includes('already paid') || errorMessage.includes('Student already paid')) {
+        setIsPaid(true)
+        setError('Sinh viên này đã thanh toán học phí!')
+      } else {
+        setIsPaid(false)
+        setError('Không tìm thấy sinh viên. Vui lòng kiểm tra lại mã hoặc thử lại sau!')
+      }
     } finally {
       setIsLoading(false)
     }
@@ -129,10 +140,49 @@ const PayTuition = () => {
           navigate('/history')
         }, 2000)
       } else {
-        setError(response.message || 'Thanh toán thất bại!')
+        // Check if tuition is already paid
+        const responseMessage = response.message || ''
+        if (responseMessage.includes('Tuition is already paid') || responseMessage.includes('already paid')) {
+          setError('❌ Sinh viên này đã thanh toán học phí rồi!')
+          setShowOtpModal(false)
+          setShowConfirm(false)
+          setIsPaid(true)
+        } else if (responseMessage.includes('Insufficient balance') || responseMessage.includes('không đủ')) {
+          setShowOtpModal(false)
+          setShowConfirm(false)
+          setShowInsufficientBalance(true)
+          
+          // Refresh page after 2 seconds to update balance
+          setTimeout(() => {
+            window.location.reload()
+          }, 2000)
+        } else {
+          setError(response.message || 'Thanh toán thất bại!')
+        }
       }
     } catch (err) {
-      setError('Mã OTP không chính xác hoặc đã hết hạn. Vui lòng thử lại!')
+      const errorMessage = err.message || err.toString()
+      
+      // Check if error is about already paid tuition
+      if (errorMessage.includes('Tuition is already paid') || errorMessage.includes('already paid')) {
+        setError('❌ Sinh viên này đã thanh toán học phí rồi!')
+        setShowOtpModal(false)
+        setShowConfirm(false)
+        setIsPaid(true)
+      } else if (errorMessage.includes('Insufficient balance') || errorMessage.includes('không đủ')) {
+        setShowOtpModal(false)
+        setShowConfirm(false)
+        setShowInsufficientBalance(true)
+        
+        // Refresh page after 2 seconds to update balance
+        setTimeout(() => {
+          window.location.reload()
+        }, 2000)
+      } else if (errorMessage.includes('Invalid OTP') || errorMessage.includes('OTP')) {
+        setError('Mã OTP không chính xác hoặc đã hết hạn. Vui lòng thử lại!')
+      } else {
+        setError('Có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại!')
+      }
       console.error('Payment error:', err)
     } finally {
       setIsLoading(false)
@@ -192,10 +242,12 @@ const PayTuition = () => {
                   type="text"
                   value={studentId}
                   onChange={(e) => {
-                    setStudentId(e.target.value)
-                    setStudentInfo(null)
-                  }}
-                  placeholder="Nhập mã sinh viên (VD: SV202401234)"
+                  setStudentId(e.target.value)
+                  setStudentInfo(null)
+                  setIsPaid(false)
+                  setError('')
+                }}
+                placeholder="Nhập mã sinh viên (VD: SV202401234)"
                   className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
                   required
                 />
@@ -214,7 +266,7 @@ const PayTuition = () => {
             </div>
 
             {/* Error Message */}
-            {error && !studentInfo && (
+            {error && !studentInfo && !isPaid && (
               <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start space-x-2">
                 <AlertCircle className="h-5 w-5 text-red-500 mt-0.5" />
                 <div className="flex-1">
@@ -223,8 +275,26 @@ const PayTuition = () => {
               </div>
             )}
 
+            {/* Already Paid Message */}
+            {isPaid && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start space-x-2">
+                <AlertCircle className="h-5 w-5 text-red-500 mt-0.5" />
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-red-800">❌ Sinh viên đã thanh toán học phí</p>
+                  <p className="text-sm text-red-600 mt-1">
+                    {studentId ? `Mã sinh viên ${studentId} đã hoàn tất thanh toán học phí cho học kỳ hiện tại.` : 'Học phí đã được thanh toán.'}
+                  </p>
+                  {studentInfo && (
+                    <p className="text-sm text-red-600 mt-1">
+                      Sinh viên: <span className="font-semibold">{studentInfo.name}</span>
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+
             {/* Student Info Display */}
-            {studentInfo && (
+            {studentInfo && !isPaid && (
               <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                 <div className="flex items-start space-x-3">
                   <UserCheck className="h-6 w-6 text-green-600 mt-1" />
@@ -264,7 +334,7 @@ const PayTuition = () => {
             )}
 
             {/* Description */}
-            {studentInfo && (
+            {studentInfo && !isPaid && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   <div className="flex items-center space-x-2">
@@ -282,7 +352,7 @@ const PayTuition = () => {
               </div>
             )}
 
-            {studentInfo && studentInfo.tuitionDue > user?.balance && (
+            {studentInfo && !isPaid && studentInfo.tuitionDue > user?.balance && (
               <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start space-x-2">
                 <AlertCircle className="h-5 w-5 text-red-500 mt-0.5" />
                 <div className="flex-1">
@@ -292,7 +362,7 @@ const PayTuition = () => {
               </div>
             )}
 
-            {studentInfo && (
+            {studentInfo && !isPaid && (
               <button
                 type="submit"
                 disabled={studentInfo.tuitionDue > user?.balance || isLoading}
@@ -448,6 +518,26 @@ const PayTuition = () => {
             <h3 className="text-2xl font-bold text-gray-800 mb-2">Thanh toán thành công!</h3>
             <p className="text-gray-600 mb-4">Giao dịch của bạn đã được xử lý thành công.</p>
             <p className="text-sm text-gray-500">Đang chuyển đến lịch sử giao dịch...</p>
+          </div>
+        </div>
+      )}
+
+      {/* Insufficient Balance Modal */}
+      {showInsufficientBalance && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl p-8 max-w-md w-full text-center animate-scale-in">
+            <div className="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+              <AlertCircle className="h-8 w-8 text-red-600" />
+            </div>
+            <h3 className="text-2xl font-bold text-red-800 mb-2">Số dư không đủ!</h3>
+            <p className="text-gray-600 mb-4">Số dư tài khoản của bạn không đủ để thực hiện giao dịch này.</p>
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+              <p className="text-sm text-yellow-800">
+                <Loader2 className="h-4 w-4 inline animate-spin mr-2" />
+                Đang cập nhật số dư và tải lại trang...
+              </p>
+            </div>
+            <p className="text-xs text-gray-500">Vui lòng kiểm tra số dư và thử lại</p>
           </div>
         </div>
       )}

@@ -27,6 +27,12 @@ export const authAPI = {
     })
     return handleResponse(response)
   },
+  
+  getBalance: async (userId) => {
+    return authenticatedFetch(`${API_BASE_URL}/ibanking/tuition/users/internal/${userId}/balance`, {
+      method: 'GET',
+    })
+  },
 }
 
 // Student API

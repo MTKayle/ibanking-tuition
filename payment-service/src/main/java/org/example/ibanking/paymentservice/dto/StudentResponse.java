@@ -1,4 +1,5 @@
-package org.example.ibanking.studentservice.dto;
+package org.example.ibanking.paymentservice.dto;
+
 
 import lombok.Data;
 
@@ -60,3 +61,4 @@ public class StudentResponse {
         this.tuitionid = tuitionid;
     }
 }
+

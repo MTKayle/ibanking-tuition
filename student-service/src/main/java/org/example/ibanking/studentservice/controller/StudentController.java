@@ -37,4 +37,16 @@ public class StudentController {
         return ResponseEntity.ok(tuitionService.isUnpaid(tuitionId));
     }
 
+    @GetMapping("/internal/{id}/student")
+    public ResponseEntity<StudentResponse> getStudentEntityById(@PathVariable Long id) {
+        StudentResponse student = studentService.getStudentPaidById(id);
+        return student != null ? ResponseEntity.ok(student) : ResponseEntity.notFound().build();
+    }
+
+    @PostMapping("/internal/{id}/set-unpaid")
+    public void setUnpaid(@PathVariable Long id) {
+        tuitionService.setUnpaid(id);
+        return;
+    }
+
 }

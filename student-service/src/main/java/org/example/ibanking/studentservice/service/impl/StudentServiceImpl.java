@@ -48,6 +48,25 @@ public class StudentServiceImpl implements StudentService {
     }
 
 
+    public StudentResponse getStudentPaidById(Long id) {
+
+        Optional<StudentEntity> studentEntity = studentRepository.findById(id);
+        //convert entity to dto
+        if (studentEntity.isEmpty() || studentEntity.get().getId() == null) {
+            throw new RuntimeException("Student not found");
+        }
+        StudentResponse studentResponse = new StudentResponse();
+        studentResponse.setId(studentEntity.get().getId());
+        studentResponse.setFullname(studentEntity.get().getFullname());
+        studentResponse.setEmail(studentEntity.get().getEmail());
+        studentResponse.setMajor(studentEntity.get().getMajor());
+        return studentResponse;
+
+
+
+    }
+
+
 
 
 }

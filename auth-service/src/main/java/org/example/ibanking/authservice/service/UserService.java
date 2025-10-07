@@ -12,4 +12,6 @@ public interface UserService {
     void refundBalance(UUID userId, double amount);
 
     double getBalance(UUID userId);
+
+    String getEmailById(UUID id);
 }

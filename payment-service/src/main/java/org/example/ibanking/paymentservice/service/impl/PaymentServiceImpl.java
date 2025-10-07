@@ -1,5 +1,6 @@
 package org.example.ibanking.paymentservice.service.impl;
 
+import org.example.ibanking.paymentservice.client.EmailClient;
 import org.example.ibanking.paymentservice.client.OtpClient;
 import org.example.ibanking.paymentservice.client.StudentClient;
 import org.example.ibanking.paymentservice.client.UserClient;
@@ -12,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,6 +29,9 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Autowired
     private OtpClient otpClient;
+
+    @Autowired
+    private EmailClient emailClient;
 
     @Autowired
     private PaymentTransactionRepository paymentTransactionRepository;
@@ -64,7 +70,7 @@ public class PaymentServiceImpl implements PaymentService {
 
 
 
-    //1) deduct on user
+
         // check tuition status first
         try{
             studentClient.status(paymentRequest.getTuitionid());
@@ -73,6 +79,7 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
 
+        //1) deduct on user
         //  2) mark student as paid
         // deduct balance (transactional in user service)
         try {
@@ -85,6 +92,9 @@ public class PaymentServiceImpl implements PaymentService {
             failTxn.setAmount(paymentRequest.getAmount());
             failTxn.setStatus("FAILED_DEDUCT");
             paymentTransactionRepository.save(failTxn);
+
+            // set tuition back to UNPAID if it was changed to PENDING
+            studentClient.setUnpaid(paymentRequest.getTuitionid());
             throw new RuntimeException("Failed to deduct user balance: " + e.getMessage());
         }
 
@@ -104,6 +114,9 @@ public class PaymentServiceImpl implements PaymentService {
                 failTxn.setAmount(paymentRequest.getAmount());
                 failTxn.setStatus("FAILED_MARKPAID_REFUNDED");
                 paymentTransactionRepository.save(failTxn);
+
+                // set tuition back to UNPAID if it was changed to PENDING
+                studentClient.setUnpaid(paymentRequest.getTuitionid());
             } catch (Exception ex) {
         // log error
 
@@ -114,10 +127,15 @@ public class PaymentServiceImpl implements PaymentService {
                 criticalTxn.setAmount(paymentRequest.getAmount());
                 criticalTxn.setStatus("CRITICAL_REFUND_FAILED");
                 paymentTransactionRepository.save(criticalTxn);
+
+                // set tuition back to UNPAID if it was changed to PENDING
+                studentClient.setUnpaid(paymentRequest.getTuitionid());
         // alert admin team
                 throw new RuntimeException("Critical: failed to refund after markPaid failure: " + ex.getMessage());
             }
         // after refund, throw original error
+            // set tuition back to UNPAID if it was changed to PENDING
+            studentClient.setUnpaid(paymentRequest.getTuitionid());
             throw new RuntimeException("Failed to mark tuition as paid, refund user: " + e.getMessage());
         }
         // 4) if both ok -> write transaction record
@@ -133,6 +151,25 @@ public class PaymentServiceImpl implements PaymentService {
         response.setTransactionId(transaction.getId());
         response.setMessage("SUCCESS");
         response.setAmount(transaction.getAmount());
+
+        // call email service to send bill
+        // call auth service to get email by username
+        ResponseEntity<String> toEmail = userClient.getEmailById(paymentRequest.getPayerid());
+        // call student service to get student entity
+        ResponseEntity<StudentResponse> studentResponse = studentClient.getStudentEntityById(paymentRequest.getStudentid());
+
+        StudentResponse student = studentResponse.getBody();
+
+        EmailRequestPayment emailRequest = new EmailRequestPayment();
+
+        emailRequest.setToEmail(toEmail.getBody());
+        emailRequest.setStudentId(paymentRequest.getStudentid());
+        emailRequest.setNameStudent(student.getFullname());
+        emailRequest.setMajor(student.getMajor());
+        //set date time now
+        emailRequest.setDateTime(LocalDateTime.now());
+        emailClient.sendEmailPayment(emailRequest);
+
         return response;
     }
 

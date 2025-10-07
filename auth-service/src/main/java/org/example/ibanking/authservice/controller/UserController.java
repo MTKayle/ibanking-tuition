@@ -41,5 +41,10 @@ public class UserController {
     public ResponseEntity<Double> balance(@PathVariable UUID id) {
         return ResponseEntity.ok(userService.getBalance(id));
     }
+
+    @GetMapping("/internal/{id}/email")
+    public ResponseEntity<String> getEmailById(@PathVariable UUID id) {
+        return ResponseEntity.ok(userService.getEmailById(id));
+    }
 }
 

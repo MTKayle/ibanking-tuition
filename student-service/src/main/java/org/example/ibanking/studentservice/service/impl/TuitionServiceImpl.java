@@ -53,4 +53,12 @@ public class TuitionServiceImpl implements TuitionService {
 
         return true;
     }
+
+    @Transactional
+    public void setUnpaid(Long tuitionId) {
+        TuitionEntity tuition = tuitionRepository.findByIdForUpdate(tuitionId);
+            tuition.setStatus("UNPAID");
+            tuitionRepository.save(tuition);
+
+    }
 }

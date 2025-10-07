@@ -58,4 +58,10 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"))
                 .getBalance();
     }
+
+    public String getEmailById(UUID id) {
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return user.getEmail();
+    }
 }

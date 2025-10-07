@@ -1,5 +1,6 @@
 package org.example.ibanking.paymentservice.client;
 
+import org.example.ibanking.paymentservice.dto.StudentResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,5 +16,11 @@ public interface StudentClient {
 
     @GetMapping("/ibanking/tuition/students/internal/{id}/status")
     ResponseEntity<Boolean> status(@PathVariable("id") Long tuitionId);
+
+    @GetMapping("/ibanking/tuition/students/internal/{id}/student")
+    ResponseEntity<StudentResponse> getStudentEntityById(@PathVariable("id") Long id);
+
+    @PostMapping("/ibanking/tuition/students/internal/{id}/set-unpaid")
+    void setUnpaid(@PathVariable("id") Long id);
 
 }
